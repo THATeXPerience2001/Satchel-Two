@@ -1,6 +1,13 @@
 # Satchel:Two GUI Info Fetcher
 # "So what's your name?" "I dunnno."
 
+"""Satchel:Two Info Library
+
+This module can take an input of a Print Homework URL from Satchel:One 
+and return the Forename, Surname and Avatar URL of the Student encoded in 
+the authentication token of the Print Homework URL.
+"""
+
 # Library setup 
 
 import sys
@@ -22,7 +29,12 @@ class getinfo():
     def fetchinfo(self, myprinthwurl=""):
 
         printurl = myprinthwurl
-        auth = printurl[65:289]
+        if "homeworks" in printurl:
+            auth = printurl[65:289]
+        elif "flexible_tasks" in printurl:
+            auth = printurl[70:294]
+        elif "classworks" in printurl:
+            auth = printurl[66:290]
         decoded = str(base64.b64decode(auth))
         studenttoken = decoded[10:18]
 

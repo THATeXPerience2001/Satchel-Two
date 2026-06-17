@@ -2,6 +2,12 @@
 # A library based on the legacy Satchel:Two CLI fetch script
 # ProjectSCR 2026
 
+"""Satchel:Two FetchLib
+
+THIS MODULE IS DEPRECATED AND IS NO LONGER SUPPORTED 
+PLEASE USE THE UPDATED FETCHLIB V2. 
+"""
+
 #Lots of library setup
 
 from icalendar import Calendar

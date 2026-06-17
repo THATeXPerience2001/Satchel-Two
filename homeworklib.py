@@ -5,6 +5,14 @@
 
 # Library setup 
 
+"""Satchel:Two Homework Library
+
+This module can take an input of a specific homework id from 
+Satchel:One and the user's authentication token (Via the Print Homework URL) 
+and return key information about the specified assignment in a list while also cleaning 
+up the description of the task of HTML leftovers.
+"""
+
 import sys
 import os
 import ssl
@@ -12,6 +20,7 @@ from pathlib import Path
 import requests
 import base64
 import warnings
+import re
 
 ssl._create_default_https_context = ssl._create_unverified_context
 requests.packages.urllib3.disable_warnings()
@@ -73,8 +82,10 @@ class homework:
         classgroup = homeworkinfo.get("class_group_name")
         teachername = homeworkinfo.get("teacher_name")
         rawdescription = homeworkinfo.get("description")
+
+        description = re.sub("<.+?>", "", rawdescription)
         
-        hwinfodat = [title, subject, teachername, classgroup, duedate, advanced_hwid, advanced_created, advanced_issued, advanced_published, advanced_updated]
+        hwinfodat = [title, subject, teachername, classgroup, duedate, description, advanced_hwid, advanced_created, advanced_issued, advanced_published, advanced_updated]
 
         return hwinfodat
 
