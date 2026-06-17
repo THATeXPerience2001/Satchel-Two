@@ -5,21 +5,20 @@
 ## Making checking your homework... Slightly less infuriating!
 
 ### CLI Status: Release 1.3
-### GUI Status: Release Candidate 1 Now out!
+### GUI Status: Release Candidate 2 in progress.
 
 ## Software requirements
 - An active Satchel:One account
 - Python 3.13.5 (Installed to PATH and NOT MS STORE)
 - Windows 10 or higher
-- MacOS High Sierra or higher
+- MacOS X 10.15 Catalina or higher
 - Linux of some kind
 
 ## Hardware requirements
-- Intel Pentium "Prescott" or newer*
-- AMD Opteron 64 SledgeHammer or newer*
-- 512MB RAM**
-- 2GB Free Space
-- 1280 x 720 resolution or greater
+- Any 64-Bit CPU made in the last decade.
+- 512MB RAM
+- 1GB Free Space
+- 1920 x 1080 screen resolution or greater
 
 ## Running the program
 
@@ -43,6 +42,3 @@ This came up to me as an idea for my A-Level Computer Science programming projec
 
 ## License
 Check the license tab above.
-
-*In order to run on this old of a processor, numpy needs to be downgraded to a pre-1.24 release, such as 1.23.5. Doing otherwise will return "illegal instruction" errors.
-** Theoretically, this could go much lower, but there's a barrier where a linux kernel can't load anymore due to a lack of RAM.
