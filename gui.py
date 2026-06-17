@@ -10,7 +10,7 @@ print(r" /        \/ __ \|  | \  \___|   Y  \  ___/|  |__ /\   |    |   \     ( 
 print(r"/_______  (____  /__|  \___  >___|  /\___  >____/ \/   |____|    \/\_/ \____/  ")
 
 print("Satchel:Two GUI CONSOLE LOG")
-print("Version: Release Candidate 1")
+print("Version: Release Candidate 2 (DEV)")
 
 
 try:
@@ -94,7 +94,7 @@ def openAbout():
         aLg = PhotoImage(file = dir + "/Assets/newlogotransparent.png")
     aboutLogo = Label(about, image = aLg, borderwidth = 0)    
     aboutText = ctk.CTkLabel(about, text="Satchel:Two GUI", bg_color=("#ffffff", "#232323"))
-    aboutVersion = ctk.CTkLabel(about, text = "Release Candidate 1", bg_color=("#ffffff", "#232323"))
+    aboutVersion = ctk.CTkLabel(about, text = "Release Candidate 2 (DEV)", bg_color=("#ffffff", "#232323"))
     aboutUs = ctk.CTkLabel(about, text = "Made in the UK by ProjectSCR", bg_color=("#ffffff", "#232323"))
     aboutLogo.place(x = 160, y = 60, anchor = CENTER)
     aboutLogo.lift()
@@ -162,11 +162,18 @@ def login():
         loginprompt.destroy()
         apitoken = ""
         buttonassignments.configure(state = "disabled")
-    printhwurl = apitoken
-    auth = apitoken[65:289]
-    dec = str(base64.b64decode(auth))
-    studenttoken = dec[10:18]
-    apitoken = auth
+    else:
+        printhwurl = apitoken
+        if "homeworks" in apitoken:
+            auth = apitoken[65:289]
+        elif "flexible_tasks" in apitoken:
+            auth = apitoken[70:294]
+        elif "classworks" in apitoken:
+            auth = apitoken[66:290]
+        dec = str(base64.b64decode(auth))
+        studenttoken = dec[10:18]
+        apitoken = auth
+        print("DEBUG: API TOKEN = ", apitoken)
 
     # Checks if the input is nothing to avoid a type error
     if len(apitoken) < 1:
@@ -180,7 +187,7 @@ def login():
             buttonassignments.configure(state = "disabled")
             throwError("badApi")
         else:
-            decoded = str(base64.b64decode(apitoken))
+            decoded = dec
 
             # Checks if the decoded token begins with user_id to verify it's valid
 
