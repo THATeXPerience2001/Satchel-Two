@@ -4,8 +4,8 @@
 
 ## Making checking your homework... Slightly less infuriating!
 
-### CLI Status: Release 1.3
-### GUI Status: Release Candidate 1 Now out!
+### CLI Status: Release 1.3 (LTS)
+### GUI Status: Release Candidate 2 due for release.
 
 ## Software requirements
 - An active Satchel:One account
@@ -15,11 +15,9 @@
 - Linux of some kind
 
 ## Hardware requirements
-- Intel Pentium "Prescott" or newer*
-- AMD Opteron 64 SledgeHammer or newer*
-- 512MB RAM**
+- Any X86-64 Processor made in the last decade
+- 300MB RAM
 - 2GB Free Space
-- 1280 x 720 resolution or greater
 
 ## Running the program
 
@@ -35,6 +33,7 @@ This came up to me as an idea for my A-Level Computer Science programming projec
 - Myself for almost everything ;)
 - Roshan Paswan for tkPDFViewer 1
 - Jeremy Jacobson for tkPDFViewer 2
+- Andrew Clarke for TkinterWeb
 - Tom Schimansky for the far-superior Custom TKinter!
 - Apple for their SF Pro fonts!
 - WhiteBox for their Packages app for Mac!
@@ -44,5 +43,3 @@ This came up to me as an idea for my A-Level Computer Science programming projec
 ## License
 Check the license tab above.
 
-*In order to run on this old of a processor, numpy needs to be downgraded to a pre-1.24 release, such as 1.23.5. Doing otherwise will return "illegal instruction" errors.
-** Theoretically, this could go much lower, but there's a barrier where a linux kernel can't load anymore due to a lack of RAM.
