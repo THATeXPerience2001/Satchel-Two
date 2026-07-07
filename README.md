@@ -10,12 +10,12 @@
 ## Software requirements
 - An active Satchel:One account
 - Python 3.13.5 (Installed to PATH and NOT MS STORE)
-- Windows 10 or higher
+- Windows 10 or higher (Windows ARM is not supported)
 - MacOS High Sierra or higher
 - Linux of some kind
 
 ## Hardware requirements
-- Any X86-64 Processor made in the last decade
+- Any X86-64 or ARM64 Processor made in the last decade
 - 300MB RAM
 - 2GB Free Space
 
