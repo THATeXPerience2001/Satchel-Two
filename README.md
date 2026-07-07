@@ -43,3 +43,13 @@ This came up to me as an idea for my A-Level Computer Science programming projec
 ## License
 Check the license tab above.
 
+## Star History
+
+<a href="https://www.star-history.com/?repos=THATeXPerience2001%2FSatchel-Two&type=date&legend=top-left">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=THATeXPerience2001/Satchel-Two&type=date&theme=dark&legend=top-left&sealed_token=kb3rCXLrfjSJGyPaaxew4-qGtFtqhUAdPwyb_qj-mCo8781hr2AIUK8-VhuSt6ih_dpGbx9Ml-gyxSCp6ElRqIWnZfk8es3YRHM4cQTRtWy6j_0zekhLk3KH-1QY0KF-cjselFb54nlauUrb48bAeohYCfkg0SUWBghpDbAqAjM1X9tTuD3C5A0rRBiK" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=THATeXPerience2001/Satchel-Two&type=date&legend=top-left&sealed_token=kb3rCXLrfjSJGyPaaxew4-qGtFtqhUAdPwyb_qj-mCo8781hr2AIUK8-VhuSt6ih_dpGbx9Ml-gyxSCp6ElRqIWnZfk8es3YRHM4cQTRtWy6j_0zekhLk3KH-1QY0KF-cjselFb54nlauUrb48bAeohYCfkg0SUWBghpDbAqAjM1X9tTuD3C5A0rRBiK" />
+   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=THATeXPerience2001/Satchel-Two&type=date&legend=top-left&sealed_token=kb3rCXLrfjSJGyPaaxew4-qGtFtqhUAdPwyb_qj-mCo8781hr2AIUK8-VhuSt6ih_dpGbx9Ml-gyxSCp6ElRqIWnZfk8es3YRHM4cQTRtWy6j_0zekhLk3KH-1QY0KF-cjselFb54nlauUrb48bAeohYCfkg0SUWBghpDbAqAjM1X9tTuD3C5A0rRBiK" />
+ </picture>
+</a>
+
