@@ -5,7 +5,7 @@
 ## Making checking your homework... Slightly less infuriating!
 
 ### CLI Status: Release 1.3 (LTS)
-### GUI Status: Release Candidate 2 due for release.
+### GUI Status: Release Candidate 2 now available!
 
 ## Software requirements
 - An active Satchel:One account
@@ -15,9 +15,11 @@
 - Linux of some kind
 
 ## Hardware requirements
-- Any X86-64 or ARM64 Processor made in the last decade
+- Any X86-64 or ARM64* Processor made in the last decade
 - 300MB RAM
 - 2GB Free Space
+
+*ARM64 only supports Linux and MacOS
 
 ## Running the program
 
