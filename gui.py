@@ -10,7 +10,7 @@ print(r" /        \/ __ \|  | \  \___|   Y  \  ___/|  |__ /\   |    |   \     ( 
 print(r"/_______  (____  /__|  \___  >___|  /\___  >____/ \/   |____|    \/\_/ \____/  ")
 
 print("Satchel:Two GUI CONSOLE LOG")
-print("Version: Release Candidate 1")
+print("Version: Release Candidate 2")
 
 
 try:
@@ -24,11 +24,11 @@ try:
     import ssl
     import pandas as pd
     from pathlib import Path
-    import tkpdfmod as pdf
+    import tkinterweb
+    from tkinterweb import HtmlFrame
     import infolib
     import fetchlib2 as fetchlib
-    import pymupdf as fitz
-    import numpy
+    import homeworklib
     import base64
     import requests
     import webbrowser
@@ -48,6 +48,7 @@ opener.addheaders = [('User-agent', 'Mozilla/5.0')]
 urllib.request.install_opener(opener)
 deftheme = str(dir + "/breaktime.json")
 ctk.set_default_color_theme(deftheme)
+hw = homeworklib.homework()
 
 print("Configuration Loaded!")
 
@@ -77,12 +78,15 @@ elif sys.platform == "darwin" or sys.platform == "linux":
     calendarlocation = os.path.expanduser("~/SatchelTwo/Download/cleaned.csv")
 else:
     raise Exception("Sorry, whatever obscure platform you're using is not supported!")
+    # I've run Satchel:Two on some REALLY obscure stuff, and that's only when this error shows up.
 
 # About window
 
 def openAbout():
 
-    about = ctk.CTkToplevel(root)  # Create a new window
+    # Config for About window
+
+    about = ctk.CTkToplevel(root)
     about.configure(fg_color=("#ffffff", "#232323"))
     about.title("About Satchel:Two")
     about.geometry("320x180")  
@@ -94,7 +98,7 @@ def openAbout():
         aLg = PhotoImage(file = dir + "/Assets/newlogotransparent.png")
     aboutLogo = Label(about, image = aLg, borderwidth = 0)    
     aboutText = ctk.CTkLabel(about, text="Satchel:Two GUI", bg_color=("#ffffff", "#232323"))
-    aboutVersion = ctk.CTkLabel(about, text = "Release Candidate 1", bg_color=("#ffffff", "#232323"))
+    aboutVersion = ctk.CTkLabel(about, text = "Release Candidate 2", bg_color=("#ffffff", "#232323"))
     aboutUs = ctk.CTkLabel(about, text = "Made in the UK by ProjectSCR", bg_color=("#ffffff", "#232323"))
     aboutLogo.place(x = 160, y = 60, anchor = CENTER)
     aboutLogo.lift()
@@ -150,39 +154,77 @@ def throwError(code):
         pHwFetched.place(x = 180, y = 40, anchor = CENTER)
         close.place(x = 180, y = 80, anchor = CENTER)
 
-# Basic login function that also validates the Print Homework URL before extracting the API Token
+# Basic login function that also validates the Print Homework URL before extracting the API Token.
 
-def login():
-    loginprompt = ctk.CTkInputDialog(title = "Satchel:Two Login", text = "Welcome back! Please enter your print homework url to log in!", fg_color=("#ffffff", "#232323"), button_fg_color = "#6D78CF", button_hover_color = "#4D589C")
-    global apitoken
+def login(startup):
+    ok = False
+    buttonsatchelone.configure(state = "disabled")
+    imagetoolbar.lift()
+    buttonsatchelone.lift()
+    buttonhandin.lift()
+    buttonassignments.configure(state = "disabled")
+    global summarypos
+    summarypos = 0
+    root.update()
+    global apitoken    
+    # Checking for a stored api url in the key.txt 
+    # It isn't encrypted because it doesn't store any credentials plus it's not shared online
+    # Which may seem controversial but it expires after a month and requires this program to really
+    # do anything with it. ¯\_(ツ)_/¯
+    if os.path.isfile("key.txt") == True and startup == True:
+        with open("key.txt", "r", encoding="utf-8") as file:
+            apitoken = file.read()
+            file.close()
+    elif os.path.isfile("key.txt") == True and startup != True:
+        loginprompt = ctk.CTkInputDialog(title = "Satchel:Two Login", text = "Welcome back! Please enter your Print Homework URL to log in.", fg_color=("#ffffff", "#232323"), button_fg_color = "#6D78CF", button_hover_color = "#4D589C")
+        apitoken = loginprompt.get_input()
+        with open("key.txt", "w+", encoding="utf-8") as file:
+            file.write(apitoken)
+            file.close()
+    else:
+        loginprompt = ctk.CTkInputDialog(title = "Satchel:Two Login", text = "Welcome back! Please enter your Print Homework URL to log in.", fg_color=("#ffffff", "#232323"), button_fg_color = "#6D78CF", button_hover_color = "#4D589C")
+        apitoken = loginprompt.get_input()
+        with open("key.txt", "w+", encoding="utf-8") as file:
+            file.write(apitoken)
+            file.close()
     global printhwurl
     global studenttoken
-    apitoken = loginprompt.get_input()
+    
+    #  Checking if the apitoken is nothing because the user does not understand the concept of "pasting".
+
     if apitoken == None:
         loginprompt.destroy()
         apitoken = ""
         buttonassignments.configure(state = "disabled")
-    printhwurl = apitoken
-    auth = apitoken[65:289]
-    dec = str(base64.b64decode(auth))
-    studenttoken = dec[10:18]
-    apitoken = auth
+    else:
+        # Decoding the 3 variants of the url to obtain the api token.
+        printhwurl = apitoken
+        if "homeworks" in apitoken:
+            auth = apitoken[65:289]
+        elif "flexible_tasks" in apitoken:
+            auth = apitoken[70:294]
+        elif "classworks" in apitoken:
+            auth = apitoken[66:290]
+        dec = str(base64.b64decode(auth))
+        studenttoken = dec[10:18]
+        apitoken = auth
 
-    # Checks if the input is nothing to avoid a type error
+
+    # Checks if the input is nothing to avoid a type error.
     if len(apitoken) < 1:
         apitoken = ""
         buttonassignments.configure(state = "disabled")
         throwError("badApin")
 
-    else:   # If it passes, check if it's divisible by 4 so it can be base64 decoded
+    else:   # If it passes, check if it's divisible by 4 so it can be base64 decoded.
         if len(apitoken) % 4 != 0:
             apitoken = ""
             buttonassignments.configure(state = "disabled")
             throwError("badApi")
         else:
-            decoded = str(base64.b64decode(apitoken))
+            decoded = dec
 
-            # Checks if the decoded token begins with user_id to verify it's valid
+            # Checks if the decoded token begins with user_id to verify it's valid.
 
             if decoded[2:9] != "user_id":
                 apitoken = ""
@@ -206,10 +248,12 @@ def login():
             avatar = userinfo[2]
             fullname = (forename, surname)
 
+            # Reporting back to the debug log and updating UI for user
+
             print("Welcome back,", forename, surname, "!")
             urllib.request.urlretrieve(avatar, dldir + "avatar.jpeg")
             avtr = ctk.CTkImage(Image.open(str(dldir + "avatar.jpeg")), size=(96,136))
-            name = ctk.CTkLabel(root, text = fullname, text_color=("#232323", "#ffffff"), corner_radius=6, bg_color="#5D67B4", fg_color=("#ffffff", "#232323"))
+            name = ctk.CTkLabel(root, text = fullname, text_color=("#232323", "#ffffff"), corner_radius=6, bg_color = ("#6472CD", "#444D8B"), fg_color=("#ffffff", "#232323"))
             avatarframe = ctk.CTkFrame(root, border_color = "#ffffff", border_width = 2, corner_radius=6, width = 100, height = 140, bg_color="#5D67B4")
             avatarpic = ctk.CTkLabel(avatarframe, image = avtr, text="")
             avatarframe.place(x = 80, y = 360, anchor=CENTER)
@@ -222,8 +266,9 @@ def login():
 # The incredibly long system to fetch all of the assignments
 
 def assignments():
-    # Getti ng the UI ready
+    # Getting the UI ready
     root.update()
+    htmlviewer.load_url("about:blank")
     progressbar = ctk.CTkProgressBar(root, orientation="horizontal", border_color = "#000000", progress_color = "#6D78CF", mode = "indeterminate")
     pleasewait = ctk.CTkLabel(root, text = "Please wait... Downloading assignments...", text_color = ("#232323", "#ffffff"), bg_color=("#ffffff", "#232323"))
     progressbar.place(x = 480, y = 340, anchor = CENTER)
@@ -280,7 +325,7 @@ def assignments():
     hwt = fetchlib.fetchhw()
     homeworktemp = hwt.apifetch(apiurl=calendarurl)
 
-    # Setting encoding because WINDOWS
+    # Setting encoding because Windows hates me
 
     if sys.platform == "win32":
         df = pd.read_csv(calendarlocation, encoding="cp1252", usecols=["UID", "Homework Title"])
@@ -290,13 +335,14 @@ def assignments():
     global summarylist
     summarylist = df["Homework Title"].tolist()
 
-    # Cleaning up the downloads DIR to prevent an infinite ammount of PDF's
+    # Cleaning up the downloads DIR to prevent an infinite ammount of HTML's
 
     todelete = os.listdir(dldir)
 
     for item in todelete:
-        if item.endswith(".pdf"):
-            os.remove(os.path.join(dldir, item))
+        if item.endswith(".html"):
+            if item.startswith("blank") == False:
+                os.remove(os.path.join(dldir, item))
 
     count = 0
 
@@ -305,20 +351,20 @@ def assignments():
     global downloads
     downloads = []
 
-    # attempt to download all the homework files as PDF's
+    # attempt to download all the homework files as HTML's
 
     try:
         while count < (len(uid_list)):
             print("Downloading assignment:", count)
             uid_current = str(uid_list[count])
-            urllib.request.urlretrieve(r"https://api.satchelone.com/api/homeworks/" + uid_current + ".pdf?smhw_token=" + apitoken, dldir + uid_current + ".pdf")
-            downloads.append(uid_current + ".pdf")
+            assignment = hw.getHomework(uid_current, printhwurl, dldir)
+            downloads.append(uid_current + ".html")
             count = count + 1
             root.update()
         print("Todos fetched successfully!")
         global ok
         ok = True
-    # Throw an error for BadGateways (Frequent)
+    # Throw an error for BadGateways (Low chance now due to change in methods)
     except urllib.error.HTTPError as e:
         if e.code == 502:
             throwError("badGateway")
@@ -335,48 +381,36 @@ def assignments():
             progressbar.destroy()
             pleasewait.destroy()
     except ("ConnectionAbortedError", "ConnectionError", "ConnectionRefusedError", "ConnectionResetError"):
-        throwError("network") # Treat any other errors as network errors
+        throwError("network") # Treat any other errors as network errors which are most likely.
         summarylist = []
         ok = False
         progressbar.stop()
         progressbar.destroy()
         pleasewait.destroy()
 
-    # Create a list of all of the PDF's in the downloads directory
-    pdflist = []
-    global pdfs
-    pdfs = os.listdir(dldir)
-    for item in pdfs:
-        if item.endswith(".pdf"):
-            pdflist.append(item)
+    # Create a list of all of the HTML's in the downloads directory
+    htmllist = []
+    global htmls
+    htmls = os.listdir(dldir)
+    for item in htmls:
+        if item.endswith(".html"):
+            htmllist.append(item)
 
     # Stop the UI after updating
     progressbar.stop()
     progressbar.destroy()
     pleasewait.destroy()
     root.update()
-    global dcmt # Initialise the PDF viewer
-    dcmt = pdf.ShowPdf()
-    resx = root.winfo_screenwidth()
-    resy = root.winfo_screenheight()
-    if resx == 1920 and resy == 1080 or resx == 1920 and resy == 1200:
-        document = dcmt.pdf_view(root, pdf_location = dldir + (downloads[0]), width = 75, height = 35, bar = False)
-    else:
-        document = dcmt.pdf_view(root, pdf_location = dldir + (downloads[0]), width = 90, height = 50, bar = False)
-    assignmentslist = ctk.CTkOptionMenu(root, values = summarylist, command=assignments_callback, width = 140, height = 20, fg_color = ("#FFFFFF", "#232323"), button_color = "#6472CD", button_hover_color = "#4D589C", bg_color = "#6472CD", dropdown_fg_color = ("#FFFFFF", "#232323"), dropdown_hover_color = "#ADADAD", text_color = ("#000000", "#FFFFFF" ), dynamic_resizing=False, hover = True)
+    assignmentslist = ctk.CTkOptionMenu(root, values = summarylist, command=assignments_callback, width = 140, height = 20, fg_color = ("#FFFFFF", "#232323"), button_color = "#6472CD", button_hover_color = "#4D589C", bg_color = ("#6472CD", "#444D8B"), dropdown_fg_color = ("#FFFFFF", "#232323"), dropdown_hover_color = "#ADADAD", text_color = ("#000000", "#FFFFFF" ), dynamic_resizing=False, hover = False)
     assignmentslist.place(x = 80, y = 500, anchor = CENTER) 
     if ok == True:
         throwError("hwFetched") # Uses the throwError as a leftover function but less complicated
-        if resx == 1920 and resy == 1080 or resx == 1920 and resy == 1200:
-            document.place(x = 475, y = 300, anchor = CENTER)
-        else:
-            document.place(x = 480, y = 320, anchor = CENTER)
+        htmlviewer.load_file(dldir + (downloads[0]))
         ok = False
         buttonsatchelone.configure(state = "enabled")
         imagetoolbar.lift()
         buttonsatchelone.lift()
         buttonhandin.lift()
-        buttonassignments.configure(state = "disabled")
         global summarypos
         summarypos = 0
         root.update()
@@ -387,32 +421,31 @@ def assignments_callback(choice):
     global summarypos
     summarypos = summarylist.index(choice)
     selection = downloads[summarypos]
-    dcmt = pdf.ShowPdf()
-    resx = root.winfo_screenwidth()
-    resy = root.winfo_screenheight()
-    if resx == 1920 and resy == 1080 or resx == 1920 and resy == 1200:
-        document = dcmt.pdf_view(root, pdf_location = dldir + selection, width = 75, height = 35, bar = False)
-        document.place(x = 475, y = 300, anchor = CENTER)
-    else:
-        document = dcmt.pdf_view(root, pdf_location = dldir + selection, width = 90, height = 50, bar = False)
-        document.place(x = 480, y = 320, anchor = CENTER)
+    htmlviewer.load_file(dldir + selection)
     imagetoolbar.lift()
     buttonsatchelone.lift()
     buttonhandin.lift()
     root.update()
 
-# Themeing options (Slightly broken currently)
+# Themeing options
 
 def themecallback():
     appearance = ctk.get_appearance_mode()
     if appearance == "Light":
         ctk.set_appearance_mode("Dark")
+        htmlviewer.configure(dark_theme_enabled = True)
+        #tkinterweb.utilities.DARK_STYLE.replace("#0d0b1a", "#232323")
+        htmlviewer.reload()
         icon = PhotoImage(file = dir + "/Assets/Dark.png")
         root.iconphoto(True, icon)
+        root.update()
     else:
         ctk.set_appearance_mode("Light")
+        htmlviewer.configure(dark_theme_enabled = False)
+        htmlviewer.reload()
         icon = PhotoImage(file = dir + "/Assets/Light.png")
         root.iconphoto(True, icon)
+        root.update()
 
 # Callback to open the assignment on Satchel:One
 
@@ -437,30 +470,33 @@ root.configure(fg_color=("#ffffff", "#232323"))
 root.resizable(False, False)
 icon = PhotoImage(file = dir + "/Assets/Light.png")
 root.iconphoto(True, icon)
+if sys.platform == "win32":
+    root.after(201, lambda :root.iconbitmap(dir + "/Assets/newlogowin32ico.ico"))
 
 # Telling CTK where the assets are
 
-lg = ctk.CTkImage(Image.open(str(dir + "/Assets/newlogoblue.png")), size=(128,80))
-sb = ctk.CTkImage(Image.open(str(dir + "/Assets/sidebar.png")), size=(160,640))
-tb = ctk.CTkImage(Image.open(str(dir + "/Assets/toolbar.png")), size=(635,35))
+lg = ctk.CTkImage(light_image = Image.open(str(dir + "/Assets/newlogolight.png")), dark_image = Image.open(str(dir + "/Assets/newlogodark.png")), size=(128,80))
+sb = ctk.CTkImage(light_image = Image.open(str(dir + "/Assets/sidebarlight.png")), dark_image = Image.open(str(dir + "/Assets/sidebardark.png")), size=(160,640))
+tb = ctk.CTkImage(light_image = Image.open(str(dir + "/Assets/toolbarlight.png")), dark_image = Image.open(str(dir + "/Assets/toolbardark.png")), size=(635,35))
 imagelogo = ctk.CTkLabel(root, image = lg, text="")
 imagesidebar = ctk.CTkLabel(root, image = sb, text="")
 imagetoolbar = ctk.CTkLabel(root, image = tb, text="")
 
 # Exit Button
-buttonexit = ctk.CTkButton(root, text = "Exit", command = root.destroy , fg_color=("#ffffff", "#232323"), bg_color = "#6472CD", hover_color = ("#F0EEE5", "#232323"), text_color = ("#232323", "#ffffff"))
+buttonexit = ctk.CTkButton(root, text = "Exit", command = root.destroy , fg_color=("#ffffff", "#232323"), bg_color = ("#6472CD", "#444D8B"), hover_color = ("#F0EEE5", "#232323"), text_color = ("#232323", "#ffffff"))
 # Assignments Button
-buttonassignments = ctk.CTkButton(root, text = "Fetch Assignments", command = assignments, fg_color=("#ffffff", "#232323"), bg_color = "#6472CD", hover_color = ("#F0EEE5", "#232323"), text_color = ("#232323", "#ffffff"))
+buttonassignments = ctk.CTkButton(root, text = "Fetch Assignments", command = assignments, fg_color=("#ffffff", "#232323"), bg_color = ("#6472CD", "#444D8B"), hover_color = ("#F0EEE5", "#232323"), text_color = ("#232323", "#ffffff"))
 # Accounts Button
-buttonaccount = ctk.CTkButton(root, text = "Log Out", command = login, fg_color=("#ffffff", "#232323"), bg_color = "#6472CD", hover_color = ("#F0EEE5", "#232323"), text_color = ("#232323", "#ffffff"))
+buttonaccount = ctk.CTkButton(root, text = "Log Out", command = lambda: login(startup=False), fg_color=("#ffffff", "#232323"), bg_color = ("#6472CD", "#444D8B"), hover_color = ("#F0EEE5", "#232323"), text_color = ("#232323", "#ffffff"))
 # About Button
-buttonabout = ctk.CTkButton(root, text = "About", command = openAbout, fg_color=("#ffffff", "#232323"), bg_color = "#6472CD", hover_color = ("#F0EEE5", "#232323"), text_color = ("#232323", "#ffffff"))
+buttonabout = ctk.CTkButton(root, text = "About", command = openAbout, fg_color=("#ffffff", "#232323"), bg_color = ("#6472CD", "#444D8B"), hover_color = ("#F0EEE5", "#232323"), text_color = ("#232323", "#ffffff"))
 # Theme Toggle button
-buttonthemetoggle = ctk.CTkButton(root, text = "Change Theme", command = themecallback, fg_color=("#ffffff", "#232323"), bg_color = "#6472CD", hover_color = ("#F0EEE5", "#232323"), text_color = ("#232323", "#ffffff"))
+buttonthemetoggle = ctk.CTkButton(root, text = "Change Theme", command = themecallback, fg_color=("#ffffff", "#232323"), bg_color = ("#6472CD", "#444D8B"), hover_color = ("#F0EEE5", "#232323"), text_color = ("#232323", "#ffffff"))
 # Hand in button
-buttonhandin = ctk.CTkButton(root, text = "Toggle Hand In", fg_color=("#ffffff", "#232323"), bg_color = "#6472CD", hover_color = ("#F0EEE5", "#232323"), text_color = ("#232323", "#ffffff"))
+buttonhandin = ctk.CTkButton(root, text = "Toggle Hand In", fg_color=("#ffffff", "#232323"), bg_color = ("#6472CD", "#444D8B"), hover_color = ("#F0EEE5", "#232323"), text_color = ("#232323", "#ffffff"))
 # Go to Satchel:One button
-buttonsatchelone = ctk.CTkButton(root, text = "View on Satchel:One", command = onecallback, fg_color=("#ffffff", "#232323"), bg_color = "#6472CD", hover_color = ("#F0EEE5", "#232323"), text_color = ("#232323", "#ffffff"))
+buttonsatchelone = ctk.CTkButton(root, text = "View on Satchel:One", command = onecallback, fg_color=("#ffffff", "#232323"), bg_color = ("#6472CD", "#444D8B"), hover_color = ("#F0EEE5", "#232323"), text_color = ("#232323", "#ffffff"))
+
 # Placing defined widgets
 
 imagesidebar.place(x = 80, y = 320, anchor = CENTER)
@@ -483,8 +519,34 @@ sfpro = ctk.CTkFont(family="SF Pro Rounded Regular", size=19)
 buttonsatchelone.configure(state = "disabled")
 buttonhandin.configure(state = "disabled")
 
-login()
+# Calling the login prompt from startup
+
+login(startup=True)
+
+# Initialising theme and HTML viewer
+
+global htmlviewer
+htmlviewer = HtmlFrame(root, messages_enabled=False, javascript_enabled=True, images_enabled=True)
+htmlviewer.place(x = 475, y = 300, height= 580, width = 630, anchor=CENTER)
+
+appearance = ctk.get_appearance_mode()
+if appearance == "Dark":
+    ctk.set_appearance_mode("Dark")
+    htmlviewer.configure(dark_theme_enabled = True)
+    htmlviewer.load_url("about:blank")
+    htmlviewer.reload()
+    icon = PhotoImage(file = dir + "/Assets/Dark.png")
+    root.iconphoto(True, icon)
+    root.update()
+else:
+    ctk.set_appearance_mode("Light")
+    htmlviewer.configure(dark_theme_enabled = False)
+    htmlviewer.load_url("about:blank")
+    htmlviewer.reload()
+    icon = PhotoImage(file = dir + "/Assets/Light.png")
+    root.iconphoto(True, icon)
+    root.update()
+
+htmlviewer.reload()
 
 root.mainloop()
-
-

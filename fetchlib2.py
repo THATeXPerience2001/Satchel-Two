@@ -2,6 +2,13 @@
 # A overhaul of the original fetchlib
 # ProjectSCR 2026
 
+"""Satchel:Two FetchLib V2
+
+This module can take an input of a specific Print Homework URL from 
+Satchel:One and download a calendar of their homework as a CSV 
+which is then cleaned by the script automatically.
+"""
+
 from icalendar import Calendar
 import csv
 import urllib.request
