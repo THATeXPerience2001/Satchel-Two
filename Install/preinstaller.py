@@ -82,6 +82,7 @@ if pyOK == False:
         time.sleep(1)
         print("Python Version:", pyver, " (FAILED) ")
         time.sleep(1)
+        print("ERROR: Your system architecture is not supported.")
     if osOK == True and archOK == False:
         time.sleep(1)
         print("Operating System: ", sys.platform, " (FAILED) ")
@@ -90,6 +91,7 @@ if pyOK == False:
         time.sleep(1)
         print("Python Version:", pyver, " (FAILED) ")
         time.sleep(1)
+        print("ERROR: Your OS is supported, but your architecture is not.")
     if osOK == True and archOK == True:
         time.sleep(1)
         print("Operating System: ", sys.platform, " (PASSED) ")
@@ -98,6 +100,7 @@ if pyOK == False:
         time.sleep(1)
         print("Python Version:", pyver, " (FAILED) ")
         time.sleep(1)
+        print("ERROR: Your system is supported but your python version is outdated. Please upgrade to 3.13.5 or later.")
 if pyOK == True:
     if osOK == False and archOK == False:
         time.sleep(1)
@@ -107,6 +110,7 @@ if pyOK == True:
         time.sleep(1)
         print("Python Version:", pyver, " (PASSED) ")
         time.sleep(1)
+        print("ERROR: Your system architecture is not supported.")
     if osOK == True and archOK == False:
         time.sleep(1)
         print("Operating System: ", sys.platform, " (FAILED) ")
@@ -115,6 +119,7 @@ if pyOK == True:
         time.sleep(1)
         print("Python Version:", pyver, " (PASSED) ")
         time.sleep(1)
+        print("ERROR: Your OS is supported, but your architecture is not.")
     if osOK == True and archOK == True:
         time.sleep(1)
         print("Operating System: ", sys.platform, " (PASSED) ")
@@ -124,6 +129,7 @@ if pyOK == True:
         print("Python Version:", pyver, " (PASSED) ")
         time.sleep(1)
         systemOK = True
+        print("ALL TESTS PASSED!")
 print()
 
 if systemOK == True:
@@ -145,29 +151,23 @@ if passed1 != "Y":
 print()
 print("STAGE 2: Installing Libraries...")
 
+## Yeah, I'm not sure how to use VENV's properly yet
+
 try: 
     if sys.platform == "win32":
         os.system("pip install --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host files.pythonhosted.org customtkinter")
         os.system("pip install --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host files.pythonhosted.org icalendar")
         os.system("pip install --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host files.pythonhosted.org pillow")
         os.system("pip install --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host files.pythonhosted.org pandas")
-        os.system("pip install --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host files.pythonhosted.org frontend")
-        os.system("pip install --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host files.pythonhosted.org pymupdf")
-        os.system("pip install --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host files.pythonhosted.org static")
-        os.system("pip install --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host files.pythonhosted.org starlette")
-        os.system("pip install --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host files.pythonhosted.org numpy")
         os.system("pip install --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host files.pythonhosted.org requests")
+        os.system("pip install --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host files.pythonhosted.org tkinterweb[recommended]")
     else:
-        os.system("pip3 install --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host files.pythonhosted.org customtkinter")
-        os.system("pip3 install --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host files.pythonhosted.org icalendar")
-        os.system("pip3 install --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host files.pythonhosted.org pillow")
-        os.system("pip3 install --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host files.pythonhosted.org pandas")
-        os.system("pip3 install --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host files.pythonhosted.org frontend")
-        os.system("pip3 install --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host files.pythonhosted.org pymupdf")
-        os.system("pip3 install --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host files.pythonhosted.org static")
-        os.system("pip3 install --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host files.pythonhosted.org starlette")
-        os.system("pip3 install --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host files.pythonhosted.org numpy")
-        os.system("pip3 install --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host files.pythonhosted.org requests")
+        os.system("pip3 install --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host files.pythonhosted.org customtkinter --break-system-packages")
+        os.system("pip3 install --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host files.pythonhosted.org icalendar --break-system-packages")
+        os.system("pip3 install --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host files.pythonhosted.org pillow --break-system-packages")
+        os.system("pip3 install --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host files.pythonhosted.org pandas --break-system-packages")
+        os.system("pip3 install --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host files.pythonhosted.org requests --break-system-packages")
+        os.system("pip3 install --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host files.pythonhosted.org tkinterweb[recommended] --break-system-packages")
 
 
 except Exception as e:
@@ -178,12 +178,32 @@ except Exception as e:
 print("")
 print("Library install complete!")
 print("Satchel:Two is now ready to install!")
+
+if sys.platform == "linux":
+    print("Since you are running Linux, this script can also download and setup Satchel:Two automatically.")
+    print("Please make sure you have Git and Pip installed first for your respective distro.")
+    autoinstall = input("Are you sure these are installed? Y/N: ")
+    if autoinstall == "Y":
+        print("STAGE 3: Preparing automatic install...")
+        os.system("cd ~ && git clone --recursive https://github.com/THATeXPerience2001/Satchel-Two.git")
+        print("Installation finished!")
+        print("To start, simply run: cd ~/Satchel-Two/ && python3 gui.py")
+        print("Thank you for installing Satchel:Two!")
+        exit()
+    else:
+        print("Installation finished!")
+        print("Thank you for installing Satchel:Two!")
+        exit()
+
 time.sleep(1)
 print()
 print("STAGE 3: Redirecting to installer...")
 print()
 print("You are being redirected to the GitHub Releases.")
 time.sleep(1)
-print("Please download the respective release for your operating system!")
-time.sleep(1)
-webbrowser.open("https://github.com/LG5706-AaronMcCormick/Satchel-Two/releases/latest", new = 0, autoraise = True)
+print("Please run the downloaded installer once finished!")
+time.sleep(3)
+if sys.platform == "win32":
+    webbrowser.open("https://github.com/THATeXPerience2001/Satchel-Two/releases/latest/download/SatchelTwoWin64.exe", new = 0, autoraise = True)
+if sys.platform == "darwin":
+    webbrowser.open("https://github.com/THATeXPerience2001/Satchel-Two/releases/latest/download/SatchelTwoMacOS.pkg", new = 0, autoraise = True)
