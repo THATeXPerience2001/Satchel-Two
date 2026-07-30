@@ -9,8 +9,9 @@
 
 ## Software requirements
 - An active Satchel:One account
-- Python 3.13.5 (Installed to PATH and NOT MS STORE)
-- Windows 10 or higher (Windows ARM is not supported)
+- Python 3.13.5 or newer
+- Python 3.8.10 or newer if using older than Windows 10
+- Windows 7 or higher (Windows ARM not supported)
 - MacOS High Sierra or higher
 - Linux of some kind
 
