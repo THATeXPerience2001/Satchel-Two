@@ -10,10 +10,10 @@
 ## Software requirements
 - An active Satchel:One account
 - Python 3.13.5 or newer
-- Python 3.8.10 or newer if using older than Windows 10
+- Python 3.8.10 for Legacy systems
 - Windows 7 or higher (Windows ARM not supported)
 - MacOS High Sierra or higher
-- Linux of some kind
+- Some form of Linux (See wiki for supported distros)
 
 ## Hardware requirements
 - Any X86-64 or ARM64* Processor made in the last decade
