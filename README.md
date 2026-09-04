@@ -8,12 +8,7 @@
 ### GUI Status: Release Candidate 2 now available!
 
 ## Software requirements
-- An active Satchel:One account
-- Python 3.13.5 or newer
-- Python 3.8.10 for Legacy systems
-- Windows 7 or higher (Windows ARM not supported)
-- MacOS High Sierra or higher
-- Some form of Linux (See wiki for supported distros)
+Please go check the [Support Page](https://github.com/THATeXPerience2001/Satchel-Two/wiki/Platform-Support)
 
 ## Hardware requirements
 - Any X86-64 or ARM64* Processor made in the last decade
