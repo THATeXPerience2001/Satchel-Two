@@ -27,6 +27,9 @@ This is my own reimplementation of Satchel:One (Formerly ShowMyHomework) that sh
 ## But... Why though?
 This came up to me as an idea for my A-Level Computer Science programming project, which is part of my course. Usually you'd just make some boring crossy road clone or whatever else tickles your fancy. But I'm crazy! ... And so decided I'd fix my issue of getting homework handed in by making reworking Satchel:One my main project. Trust me, This isn't just a simple project. Even after A-Levels, I plan to continue development of the program to make something that can help others and not just fix my minor complaints.
 
+## AI
+This project is **100% hand coded** without any use of AI in the code whatsoever. I am all for the anti-slop movement and hope that because of my work, I can encourage others to move away from using AI for absolutely everything possible. 
+
 ## Credits
 - Myself for almost everything ;)
 - Roshan Paswan for tkPDFViewer 1
