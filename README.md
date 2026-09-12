@@ -5,7 +5,7 @@
 ## Making checking your homework... Slightly less infuriating!
 
 ### CLI Status: Release 1.3 (LTS)
-### GUI Status: Release Candidate 2 now available!
+### GUI Status: Release 1.0 - Suitcase now out!
 
 ## Software requirements
 Please go check the [Support Page](https://github.com/THATeXPerience2001/Satchel-Two/wiki/Platform-Support)
@@ -19,7 +19,10 @@ Please go check the [Support Page](https://github.com/THATeXPerience2001/Satchel
 
 ## Running the program
 
-Consult the wiki: [https://github.com/THATeXPerience2001/Satchel-Two/wiki]
+For Windows users, you can watch the video linked here ->
+[Quick start guide for Windows 10/11](https://www.youtube.com/watch?v=OsEOoOCTvfE)
+
+If you want a written guide: [https://github.com/THATeXPerience2001/Satchel-Two/wiki]
 
 ## What is this?
 This is my own reimplementation of Satchel:One (Formerly ShowMyHomework) that should actually function using the immense power of API TOKENS and iCalendars. This is designed to completely overhaul the borderline useless UI of Satchel:One that is so outdated that it can still function on Windows 2000. Not to mention the fact that in it's current state, it is utterly broken with random HTML formatting errors, ridiculously out of range date and times and a whole bunch of silly stuff that makes it infuriating and funny at the same time. 
