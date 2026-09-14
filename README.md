@@ -4,15 +4,14 @@
 
 ## Making checking your homework... Slightly less infuriating!
 
-### CLI Status: Release 1.3 (LTS)
-### GUI Status: Release 1.0 - Suitcase now out!
+### Current version: Release 1.0 - Suitcase
 
 ## Software requirements
 Please go check the [Support Page](https://github.com/THATeXPerience2001/Satchel-Two/wiki/Platform-Support)
 
 ## Hardware requirements
 - Any X86-64 or ARM64* Processor made in the last decade
-- 300MB RAM
+- 200MB RAM Free
 - 2GB Free Space
 
 *ARM64 only supports Linux and MacOS
