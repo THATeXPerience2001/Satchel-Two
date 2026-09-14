@@ -13,6 +13,7 @@ the authentication token of the Print Homework URL.
 import sys
 import os
 import ssl
+import re
 from pathlib import Path
 import requests
 import base64
@@ -29,14 +30,11 @@ class getinfo():
     def fetchinfo(self, myprinthwurl=""):
 
         printurl = myprinthwurl
-        if "homeworks" in printurl:
-            auth = printurl[65:289]
-        elif "flexible_tasks" in printurl:
-            auth = printurl[70:294]
-        elif "classworks" in printurl:
-            auth = printurl[66:290]
+        auth = auth = str((printurl.split("smhw_token=", 1)[1]))
         decoded = str(base64.b64decode(auth))
-        studenttoken = decoded[10:18]
+        sdttkn = re.search(r'(?<=user_id=)(.*?)(?=&)', decoded)
+        if sdttkn:
+            studenttoken = sdttkn.group(1)
 
         # Whole bunch of URL stuff to send for specific headers using the token and response
 

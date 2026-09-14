@@ -10,7 +10,7 @@ print(r" /        \/ __ \|  | \  \___|   Y  \  ___/|  |__ /\   |    |   \     ( 
 print(r"/_______  (____  /__|  \___  >___|  /\___  >____/ \/   |____|    \/\_/ \____/  ")
 
 print("Satchel:Two GUI CONSOLE LOG")
-print("Version: Release Candidate 2")
+print("Version: 1.0b - Suitcase")
 
 
 try:
@@ -22,6 +22,7 @@ try:
     import sys
     import os
     import ssl
+    import re
     import pandas as pd
     from pathlib import Path
     import tkinterweb
@@ -32,6 +33,7 @@ try:
     import base64
     import requests
     import webbrowser
+    from datetime import datetime
     print("All modules initialised!")
 
 except Exception as e:
@@ -49,12 +51,42 @@ urllib.request.install_opener(opener)
 deftheme = str(dir + "/breaktime.json")
 ctk.set_default_color_theme(deftheme)
 hw = homeworklib.homework()
+# Thanks for Andereoo for helping patch the dark style colours!
+tkinterweb.utilities.DARK_STYLE = """
+/* Additional stylesheet to be loaded whenever dark mode is enabled. */
+/* Display properties document body. */
+HTML, BODY {
+  background-color: #232323;
+  color: #ffffff;
+}
+
+/* Display properties for mark elements. */
+MARK {
+    background: #8c7c00;
+}
+
+/* Display properties for hyperlinks */
+:link    { color: #7768d9; }
+:visited { color: #5245a8; }
+
+/* Display properties for form items. */
+INPUT, TEXTAREA, SELECT, BUTTON { 
+  background-color: #171524;
+  color: #ffffff;
+}
+INPUT[type="submit"],INPUT[type="button"], INPUT[type="reset"], BUTTON {
+  background-color: #171524;
+  color: #ffffff;
+  color: tcl(::tkhtml::if_disabled #666666 #ffffff);
+}
+"""
 
 print("Configuration Loaded!")
 
 if sys.platform == "win32":
     os.system(r'mkdir "%userprofile%\Documents\SatchelTwo"')
     os.system(r'mkdir "%userprofile%\Documents\SatchelTwo\Download"')
+    ctk.deactivate_automatic_dpi_awareness()
 else:
     os.system("mkdir ~/SatchelTwo/")
     os.system("mkdir ~/SatchelTwo/Download/")
@@ -94,11 +126,15 @@ def openAbout():
     appearance = ctk.get_appearance_mode()
     if appearance == "Dark":
         aLg = PhotoImage(file = dir + "/Assets/newlogoblack.png")
+        icon = PhotoImage(file = dir + "/Assets/Dark.png")
+        root.iconphoto(True, icon)
     else:
         aLg = PhotoImage(file = dir + "/Assets/newlogotransparent.png")
+        icon = PhotoImage(file = dir + "/Assets/Light.png")
+        root.iconphoto(True, icon)
     aboutLogo = Label(about, image = aLg, borderwidth = 0)    
     aboutText = ctk.CTkLabel(about, text="Satchel:Two GUI", bg_color=("#ffffff", "#232323"))
-    aboutVersion = ctk.CTkLabel(about, text = "Release Candidate 2", bg_color=("#ffffff", "#232323"))
+    aboutVersion = ctk.CTkLabel(about, text = "Version 1.0b - Suitcase", bg_color=("#ffffff", "#232323"))
     aboutUs = ctk.CTkLabel(about, text = "Made in the UK by ProjectSCR", bg_color=("#ffffff", "#232323"))
     aboutLogo.place(x = 160, y = 60, anchor = CENTER)
     aboutLogo.lift()
@@ -126,6 +162,7 @@ def throwError(code):
     eNetwork = ctk.CTkLabel(errorwin, text = "We encountered a network error! CODE = WIFFY", bg_color=("#ffffff", "#232323"))
     eCritical = ctk.CTkLabel(errorwin, text = "Satchel:Two has encountered a critical error! CODE = REQUIES", bg_color=("#ffffff", "#232323"))
     eBadApi = ctk.CTkLabel(errorwin, text = "Your API key is invalid! CODE = FOOLISHNESS", bg_color=("#ffffff", "#232323"))
+    eExpired = ctk.CTkLabel(errorwin, text = "Your token has expired! CODE = SOURMILK", bg_color=("#ffffff", "#232323"))
     eBadApin = ctk.CTkLabel(errorwin, text = "You didn't put in anything! CODE = SILLY", bg_color=("#ffffff", "#232323"))
     pHwFetched = ctk.CTkLabel(errorwin, text = "Homework has been fetched!",bg_color=("#ffffff", "#232323")) 
     if code == "badGateway":
@@ -146,6 +183,10 @@ def throwError(code):
         eBadApi.place(x = 180, y = 40, anchor = CENTER)
         relog.place(x = 180, y = 80, anchor = CENTER)
         print("ERROR: Bad API token!")
+    if code == "expired":
+            eExpired.place(x = 180, y = 40, anchor = CENTER)
+            relog.place(x = 180, y = 80, anchor = CENTER)
+            print("ERROR: Expired token!")
     if code == "badApin":
         eBadApin.place(x = 180, y = 40, anchor = CENTER)
         relog.place(x = 180, y = 80, anchor = CENTER)
@@ -169,7 +210,7 @@ def login(startup):
     global apitoken    
     # Checking for a stored api url in the key.txt 
     # It isn't encrypted because it doesn't store any credentials plus it's not shared online
-    # Which may seem controversial but it expires after a month and requires this program to really
+    # which may seem controversial but it expires after a month and requires this program to really
     # do anything with it. ¯\_(ツ)_/¯
     if os.path.isfile("key.txt") == True and startup == True:
         with open("key.txt", "r", encoding="utf-8") as file:
@@ -196,17 +237,39 @@ def login(startup):
         loginprompt.destroy()
         apitoken = ""
         buttonassignments.configure(state = "disabled")
+        throwError("badApin")
     else:
         # Decoding the 3 variants of the url to obtain the api token.
+        # Issue #10 patched by changing method.
         printhwurl = apitoken
-        if "homeworks" in apitoken:
-            auth = apitoken[65:289]
-        elif "flexible_tasks" in apitoken:
-            auth = apitoken[70:294]
-        elif "classworks" in apitoken:
-            auth = apitoken[66:290]
+        auth = str((apitoken.split("smhw_token=", 1)[1]))
+        #if "homeworks" in apitoken:
+        #    auth = apitoken[65:289]
+        #elif "flexible_tasks" in apitoken:
+        #    auth = apitoken[70:294]
+        #elif "classworks" in apitoken:
+        #    auth = apitoken[66:290]
+        #else:
+        #    apitoken = ""
+        #    buttonassignments.configure(state = "disabled")
+        #    throwError("badApi")
         dec = str(base64.b64decode(auth))
-        studenttoken = dec[10:18]
+        #Handling expired tokens
+        expdate = re.search(r'(?<=expiry_date=)(.*?)(?=T)', dec)
+        if expdate:
+            expiry_date = expdate.group(1)
+        expiry = expiry_date.replace("-", " ")
+        date = str(datetime.today()).split()[0]
+        date = date.replace("-", " ")
+        expcomp = datetime.strptime(expiry, "%Y %m %d")
+        datecomp = datetime.strptime(date, "%Y %m %d")
+        if expcomp <= datecomp: #Comparing the dates to see if the token is past expiry
+            expiredtoken = True
+        else:
+            expiredtoken = False
+        sdttkn = re.search(r'(?<=user_id=)(.*?)(?=&)', dec)
+        if sdttkn:
+            studenttoken = sdttkn.group(1)
         apitoken = auth
 
 
@@ -226,41 +289,46 @@ def login(startup):
 
             # Checks if the decoded token begins with user_id to verify it's valid.
 
-            if decoded[2:9] != "user_id":
+            if "user_id" in dec == False:
                 apitoken = ""
                 throwError("badApi")
                 buttonassignments.configure(state = "disabled")
                 print("Invalid login detected!")
+            elif expiredtoken == True:
+                apitoken = ""
+                throwError("expired")
+                buttonassignments.configure(state = "disabled")
             else:
                 print("Logged in OK!")
                 buttonassignments.configure(state = "enabled")
                 uinf = infolib.getinfo()
                 userinfo = uinf.fetchinfo(myprinthwurl = printhwurl)
 
-            # Interfacing with the API to fetch the student name and avatar    
+                # Interfacing with the API to fetch the student name and avatar    
 
-            global forename
-            global surname
-            global fullname
+                global forename
+                global surname
+                global fullname
 
-            forename = userinfo[0]
-            surname = userinfo[1]
-            avatar = userinfo[2]
-            fullname = (forename, surname)
+                forename = userinfo[0]
+                surname = userinfo[1]
+                avatar = userinfo[2]
+                fullname = (forename, surname)
 
-            # Reporting back to the debug log and updating UI for user
+                # Reporting back to the debug log and updating UI for user
 
-            print("Welcome back,", forename, surname, "!")
-            urllib.request.urlretrieve(avatar, dldir + "avatar.jpeg")
-            avtr = ctk.CTkImage(Image.open(str(dldir + "avatar.jpeg")), size=(96,136))
-            name = ctk.CTkLabel(root, text = fullname, text_color=("#232323", "#ffffff"), corner_radius=6, bg_color = ("#6472CD", "#444D8B"), fg_color=("#ffffff", "#232323"))
-            avatarframe = ctk.CTkFrame(root, border_color = "#ffffff", border_width = 2, corner_radius=6, width = 100, height = 140, bg_color="#5D67B4")
-            avatarpic = ctk.CTkLabel(avatarframe, image = avtr, text="")
-            avatarframe.place(x = 80, y = 360, anchor=CENTER)
-            avatarpic.place(x = 50, y = 70, anchor=CENTER)
-            name.place(x = 80, y = 460, anchor=CENTER)
-            name.lift()
-            root.update()
+                print("Welcome back,", forename, surname, "!")
+                #print(auth)
+                urllib.request.urlretrieve(avatar, dldir + "avatar.jpeg")
+                avtr = ctk.CTkImage(Image.open(str(dldir + "avatar.jpeg")), size=(96,136))
+                name = ctk.CTkLabel(root, text = fullname, text_color=("#232323", "#ffffff"), corner_radius=6, width = 140, height = 45, wraplength = 120, bg_color = ("#6472CD", "#384079"), fg_color=("#ffffff", "#232323"))
+                avatarframe = ctk.CTkFrame(root, border_color = "#ffffff", border_width = 2, corner_radius=6, width = 100, height = 140, bg_color="#5D67B4")
+                avatarpic = ctk.CTkLabel(avatarframe, image = avtr, text="")
+                avatarframe.place(x = 80, y = 360, anchor=CENTER)
+                avatarpic.place(x = 50, y = 70, anchor=CENTER)
+                name.place(x = 80, y = 460, anchor=CENTER)
+                name.lift()
+                root.update()
     
     
 # The incredibly long system to fetch all of the assignments
@@ -328,12 +396,17 @@ def assignments():
     # Setting encoding because Windows hates me
 
     if sys.platform == "win32":
-        df = pd.read_csv(calendarlocation, encoding="cp1252", usecols=["UID", "Homework Title"])
+        df = pd.read_csv(calendarlocation, encoding="cp1252", usecols=["UID", "Homework Title", "URL"])
     else:
-        df = pd.read_csv(calendarlocation, usecols=["UID", "Homework Title"])
+        df = pd.read_csv(calendarlocation, usecols=["UID", "Homework Title", "URL"])
     uid_list = df["UID"].tolist()
     global summarylist
     summarylist = df["Homework Title"].tolist()
+    urllist = df["URL"].tolist()
+    for x in urllist:
+        if "quizzes" in x:
+            quizno = urllist.index(x)
+            uid_list[quizno] = str("Q" + str(uid_list[quizno]))
 
     # Cleaning up the downloads DIR to prevent an infinite ammount of HTML's
 
@@ -357,7 +430,11 @@ def assignments():
         while count < (len(uid_list)):
             print("Downloading assignment:", count)
             uid_current = str(uid_list[count])
-            assignment = hw.getHomework(uid_current, printhwurl, dldir)
+            if "Q" in uid_current:
+                uid_current = uid_current.replace("Q", "")
+                assignment = hw.getHomework(uid_current, printhwurl, dldir, True)
+            else:
+                assignment = hw.getHomework(uid_current, printhwurl, dldir, False)
             downloads.append(uid_current + ".html")
             count = count + 1
             root.update()
@@ -373,6 +450,8 @@ def assignments():
             progressbar.stop()
             progressbar.destroy()
             pleasewait.destroy()
+        if e.code == 404:
+            pass
         else:   # Throw an error for internet connection
             throwError("network")
             summarylist = []
@@ -406,26 +485,50 @@ def assignments():
     if ok == True:
         throwError("hwFetched") # Uses the throwError as a leftover function but less complicated
         htmlviewer.load_file(dldir + (downloads[0]))
-        ok = False
         buttonsatchelone.configure(state = "enabled")
+        buttonhandin.configure(state = "disabled")
         imagetoolbar.lift()
         buttonsatchelone.lift()
         buttonhandin.lift()
         global summarypos
         summarypos = 0
+        htmlviewer.load_url("about:blank")
         root.update()
     root.update()
    
 # Creating a callback for the assignments list
+
 def assignments_callback(choice):
     global summarypos
+    global currentstatus
+    global currentid
     summarypos = summarylist.index(choice)
     selection = downloads[summarypos]
+    currentid = selection[:-5]
+    currentstatus = hw.getTodos(myprinthwurl=printhwurl, taskid=currentid)
+    if currentstatus[1] == True:
+        buttonhandin.configure(state = "enabled", text = "Withdraw Assignment") #If the assignment is handed in, withdraw it.
+    else:
+        buttonhandin.configure(state = "enabled", text = "Hand In Assignment") #If the assignmnet is outstanding, hand it in.
     htmlviewer.load_file(dldir + selection)
     imagetoolbar.lift()
     buttonsatchelone.lift()
     buttonhandin.lift()
     root.update()
+
+#Callback for handing in and withdrawing assignments
+
+def hand_in():
+    global currentstatus
+    global currentid
+    currentstatus = hw.getTodos(myprinthwurl=printhwurl, taskid=currentid)
+    taskstatus = hw.handin(classtaskid=currentstatus[0], myprinthwurl=printhwurl, status=currentstatus[1])
+    if taskstatus == True:
+        buttonhandin.configure(text = "Withdraw Assignment")
+        root.update()
+    else:
+        buttonhandin.configure(text = "Hand In Assignment")
+        root.update()
 
 # Themeing options
 
@@ -485,15 +588,15 @@ imagetoolbar = ctk.CTkLabel(root, image = tb, text="")
 # Exit Button
 buttonexit = ctk.CTkButton(root, text = "Exit", command = root.destroy , fg_color=("#ffffff", "#232323"), bg_color = ("#6472CD", "#444D8B"), hover_color = ("#F0EEE5", "#232323"), text_color = ("#232323", "#ffffff"))
 # Assignments Button
-buttonassignments = ctk.CTkButton(root, text = "Fetch Assignments", command = assignments, fg_color=("#ffffff", "#232323"), bg_color = ("#6472CD", "#444D8B"), hover_color = ("#F0EEE5", "#232323"), text_color = ("#232323", "#ffffff"))
+buttonassignments = ctk.CTkButton(root, text = "Fetch Assignments", command = assignments, fg_color=("#ffffff", "#232323"), bg_color = ("#8A92E9", "#31386A"), hover_color = ("#F0EEE5", "#232323"), text_color = ("#232323", "#ffffff"))
 # Accounts Button
-buttonaccount = ctk.CTkButton(root, text = "Log Out", command = lambda: login(startup=False), fg_color=("#ffffff", "#232323"), bg_color = ("#6472CD", "#444D8B"), hover_color = ("#F0EEE5", "#232323"), text_color = ("#232323", "#ffffff"))
+buttonaccount = ctk.CTkButton(root, text = "Log Out", command = lambda: login(startup=False), fg_color=("#ffffff", "#232323"), bg_color = ("#8A92E9", "#31386A"), hover_color = ("#F0EEE5", "#232323"), text_color = ("#232323", "#ffffff"))
 # About Button
-buttonabout = ctk.CTkButton(root, text = "About", command = openAbout, fg_color=("#ffffff", "#232323"), bg_color = ("#6472CD", "#444D8B"), hover_color = ("#F0EEE5", "#232323"), text_color = ("#232323", "#ffffff"))
+buttonabout = ctk.CTkButton(root, text = "About", command = openAbout, fg_color=("#ffffff", "#232323"), bg_color = ("#8A92E9", "#31386A"), hover_color = ("#F0EEE5", "#232323"), text_color = ("#232323", "#ffffff"))
 # Theme Toggle button
 buttonthemetoggle = ctk.CTkButton(root, text = "Change Theme", command = themecallback, fg_color=("#ffffff", "#232323"), bg_color = ("#6472CD", "#444D8B"), hover_color = ("#F0EEE5", "#232323"), text_color = ("#232323", "#ffffff"))
 # Hand in button
-buttonhandin = ctk.CTkButton(root, text = "Toggle Hand In", fg_color=("#ffffff", "#232323"), bg_color = ("#6472CD", "#444D8B"), hover_color = ("#F0EEE5", "#232323"), text_color = ("#232323", "#ffffff"))
+buttonhandin = ctk.CTkButton(root, text = "Hand In", command = hand_in, fg_color=("#ffffff", "#232323"), bg_color = ("#6472CD", "#444D8B"), hover_color = ("#F0EEE5", "#232323"), text_color = ("#232323", "#ffffff"))
 # Go to Satchel:One button
 buttonsatchelone = ctk.CTkButton(root, text = "View on Satchel:One", command = onecallback, fg_color=("#ffffff", "#232323"), bg_color = ("#6472CD", "#444D8B"), hover_color = ("#F0EEE5", "#232323"), text_color = ("#232323", "#ffffff"))
 
