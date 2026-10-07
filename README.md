@@ -1,10 +1,11 @@
 # The Satchel:Two Project
+## Making homework... Slightly less infuriating!
 
-<img width="256" height="160" alt="newlogotransparent" src="https://github.com/user-attachments/assets/37aaabd2-8dda-401f-8c28-f4a8b70b6f10" />
+<img width="805" height="677" alt="backpack" src="https://github.com/user-attachments/assets/994c0b76-211e-4d19-b9ae-cc40930b804d" />
 
-## Making checking your homework... Slightly less infuriating!
+## What is Satchel:Two?
 
-### Current version: Release 1.0 - Suitcase
+Satchel:Two is an open-source, Python-based client for the popular homework platform, Satchel:One.
 
 ## Software requirements
 Please go check the [Support Page](https://github.com/THATeXPerience2001/Satchel-Two/wiki/Platform-Support)
@@ -23,7 +24,7 @@ For Windows users, you can watch the video linked here ->
 
 If you want a written guide: [https://github.com/THATeXPerience2001/Satchel-Two/wiki]
 
-## What is this?
+## I want a deeper explanation.
 This is my own reimplementation of Satchel:One (Formerly ShowMyHomework) that should actually function using the immense power of API TOKENS and iCalendars. This is designed to completely overhaul the borderline useless UI of Satchel:One that is so outdated that it can still function on Windows 2000. Not to mention the fact that in it's current state, it is utterly broken with random HTML formatting errors, ridiculously out of range date and times and a whole bunch of silly stuff that makes it infuriating and funny at the same time. 
 
 ## But... Why though?
