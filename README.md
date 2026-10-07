@@ -1,7 +1,7 @@
 # The Satchel:Two Project
 ## Making homework... Slightly less infuriating!
 
-<img width="805" height="677" alt="backpack" src="https://github.com/user-attachments/assets/994c0b76-211e-4d19-b9ae-cc40930b804d" />
+<img width="503" height="434" alt="backpack" src="https://github.com/user-attachments/assets/994c0b76-211e-4d19-b9ae-cc40930b804d" />
 
 ## What is Satchel:Two?
 
