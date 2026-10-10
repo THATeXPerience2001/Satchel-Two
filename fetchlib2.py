@@ -106,11 +106,11 @@ class fetchhw():
             else:
                 csvfile = icsfile[:-3] + "csv"
             try:
-                with open(csvfile, 'w') as myfile:
+                with open(csvfile, 'w', encoding="utf-8") as myfile:
                     wr = csv.writer(myfile, quoting=csv.QUOTE_ALL)
                     wr.writerow(headers)
                     for event in sortedevents:
-                        values = (event.summary.encode('utf8').decode(), event.uid, event.description.encode('utf8').decode(), event.location, event.start, event.end, event.url)
+                        values = (event.summary.encode('utf-8').decode(), event.uid, event.description.encode('utf-8').decode(), event.location, event.start, event.end, event.url)
                         wr.writerow(values)
             except IOError:
                 print("Could not open file! Please close Excel!")
@@ -125,10 +125,9 @@ class fetchhw():
         input_csv = calendarlocation_str
         output_csv = cleanedlocation
 
-        if sys.platform == "win32":
-            df = pd.read_csv(input_csv, encoding="cp1252")
-        else:
-            df = pd.read_csv(input_csv)
+
+        df = pd.read_csv(input_csv, encoding="utf-8")
+
 
         # Prepare new columns
         new_columns = [

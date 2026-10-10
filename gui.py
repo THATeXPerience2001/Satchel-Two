@@ -1,7 +1,5 @@
-# Satchel:Two GUI
-# Finally a GUI that actually looks nice!
-
-#Just importing all the libraries I may need
+# Satchel:Two
+# Finally a client that actually looks nice!
 
 print(r"  _________       __         .__           .__       ___________               ")
 print(r" /   _____/____ _/  |_  ____ |  |__   ____ |  |   /\ \__    ___/_  _  ______   ")
@@ -9,15 +7,16 @@ print(r" \_____  \\__  \\   __\/ ___\|  |  \_/ __ \|  |   \/   |    |  \ \/ \/ /
 print(r" /        \/ __ \|  | \  \___|   Y  \  ___/|  |__ /\   |    |   \     (  <_> ) ")
 print(r"/_______  (____  /__|  \___  >___|  /\___  >____/ \/   |____|    \/\_/ \____/  ")
 
-print("Satchel:Two GUI CONSOLE LOG")
-print("Version: 1.0b - Suitcase")
+print("Satchel:Two CONSOLE")
+print("Version: 1.1a - Backpack")
 
+# Library Setup
 
 try:
     from tkinter import *
     import customtkinter as ctk
     import icalendar
-    from PIL import Image, ImageTk, ImageFile
+    from PIL import Image, ImageFile
     import urllib.request
     import sys
     import os
@@ -34,7 +33,9 @@ try:
     import requests
     import webbrowser
     from datetime import datetime
-    print("All modules initialised!")
+    import time
+    import yaml
+    print("Libraries loaded OK!")
 
 except Exception as e:
     print(f"Satchel:Two encountered an error while importing necessary modules or libraries: {e}")
@@ -43,7 +44,6 @@ except Exception as e:
 
 projfile = os.path.realpath(__file__)
 dir = os.path.dirname(projfile)
-# ssl._create_default_https_context = ssl._create_unverified_context
 requests.packages.urllib3.disable_warnings()
 opener = urllib.request.build_opener()
 opener.addheaders = [('User-agent', 'Mozilla/5.0')]
@@ -51,7 +51,6 @@ urllib.request.install_opener(opener)
 deftheme = str(dir + "/breaktime.json")
 ctk.set_default_color_theme(deftheme)
 hw = homeworklib.homework()
-# Thanks for Andereoo for helping patch the dark style colours!
 tkinterweb.utilities.DARK_STYLE = """
 /* Additional stylesheet to be loaded whenever dark mode is enabled. */
 /* Display properties document body. */
@@ -81,7 +80,7 @@ INPUT[type="submit"],INPUT[type="button"], INPUT[type="reset"], BUTTON {
 }
 """
 
-print("Configuration Loaded!")
+# Setting directories and DPI Scaling
 
 if sys.platform == "win32":
     os.system(r'mkdir "%userprofile%\Documents\SatchelTwo"')
@@ -91,7 +90,7 @@ else:
     os.system("mkdir ~/SatchelTwo/")
     os.system("mkdir ~/SatchelTwo/Download/")
 
-# Windows uses a different file 
+# Windows uses a different file structure
 
 if sys.platform == "win32":
     home = Path.home()
@@ -112,35 +111,123 @@ else:
     raise Exception("Sorry, whatever obscure platform you're using is not supported!")
     # I've run Satchel:Two on some REALLY obscure stuff, and that's only when this error shows up.
 
-# About window
+if os.path.isfile("config.yaml") == False:
+    with open("config.yaml", "w") as conf:
+        yaml.safe_dump({'currentTheme': 'Light', 'key': None, 'photoEnabled': True, 'nameEnabled': True, 'htmlScale': 1, 'dpiScalingEnabled': False}, conf)
+        conf.close()
 
-def openAbout():
+with open("config.yaml", "r") as conf:
+    s2config = yaml.safe_load(conf)
+    conf.close()
 
-    # Config for About window
+# Settings window
+
+def openSettings():
+
+    with open("config.yaml", "r") as conf:
+        s2config = yaml.safe_load(conf)
+
+    # Toggling the profile photo
+    
+    def togglePhoto():
+        with open("config.yaml", "r") as conf:
+            s2config = yaml.safe_load(conf)
+            if s2config["photoEnabled"] == False:
+                with open("config.yaml", "w") as conf:
+                    s2config["photoEnabled"] = True
+                    yaml.safe_dump(s2config, conf)
+            else:
+                with open("config.yaml", "w") as conf:
+                    s2config["photoEnabled"] = False
+                    yaml.safe_dump(s2config, conf)
+        conf.close()
+
+    def toggleName():
+        with open("config.yaml", "r") as conf:
+            s2config = yaml.safe_load(conf)
+            if s2config["nameEnabled"] == False:
+                with open("config.yaml", "w") as conf:
+                    s2config["nameEnabled"] = True
+                    yaml.safe_dump(s2config, conf)
+            else:
+                with open("config.yaml", "w") as conf:
+                    s2config["nameEnabled"] = False
+                    yaml.safe_dump(s2config, conf)
+        conf.close()
+
+    # Fix for inconsistent decimal values with CTkSlider
+
+    def adjustScale(value):
+        if value == (1.2999999999999998):
+            scl = 1.3
+        else:
+            scl = value
+
+        with open("config.yaml", "r") as conf:
+            s2config = yaml.safe_load(conf)
+            with open("config.yaml", "w") as conf:
+                s2config["htmlScale"] = float(scl)
+                yaml.safe_dump(s2config, conf)
+        conf.close()
+        
+
+    # Config for Settings/About window
 
     about = ctk.CTkToplevel(root)
     about.configure(fg_color=("#ffffff", "#232323"))
-    about.title("About Satchel:Two")
-    about.geometry("320x180")  
+    about.title("Satchel:Two Settings")
+    about.geometry("640x340")  
     about.resizable(False, False)
     appearance = ctk.get_appearance_mode()
     if appearance == "Dark":
-        aLg = PhotoImage(file = dir + "/Assets/newlogoblack.png")
+        aLg = ctk.CTkImage(dark_image = Image.open(str(dir + "/Assets/newlogotransparent.png")), size = (128,80))
+        aBox = ctk.CTkImage(dark_image = Image.open(str(dir + "/Assets/aboutboxdark.png")), size = (300,320))
         icon = PhotoImage(file = dir + "/Assets/Dark.png")
         root.iconphoto(True, icon)
     else:
-        aLg = PhotoImage(file = dir + "/Assets/newlogotransparent.png")
+        aLg = ctk.CTkImage(light_image = Image.open(str(dir + "/Assets/newlogotransparent.png")), size = (128,80))
+        aBox = ctk.CTkImage(light_image = Image.open(str(dir + "/Assets/aboutboxlight.png")), size = (300,320))
         icon = PhotoImage(file = dir + "/Assets/Light.png")
         root.iconphoto(True, icon)
-    aboutLogo = Label(about, image = aLg, borderwidth = 0)    
-    aboutText = ctk.CTkLabel(about, text="Satchel:Two GUI", bg_color=("#ffffff", "#232323"))
-    aboutVersion = ctk.CTkLabel(about, text = "Version 1.0b - Suitcase", bg_color=("#ffffff", "#232323"))
-    aboutUs = ctk.CTkLabel(about, text = "Made in the UK by ProjectSCR", bg_color=("#ffffff", "#232323"))
-    aboutLogo.place(x = 160, y = 60, anchor = CENTER)
+    if s2config["photoEnabled"] == False:
+        photoOn = ctk.StringVar(value="false")
+    else:
+        photoOn = ctk.StringVar(value="true")
+    if s2config["nameEnabled"] == False:
+        nameOn = ctk.StringVar(value="false")
+    else:
+        nameOn = ctk.StringVar(value="true")
+    photoOn = ctk.CTkSwitch(about, text="Show Profile Photo", command=togglePhoto, variable=photoOn, onvalue="true", offvalue="false", button_color=("#eeeeee", "#323232"), button_hover_color=("#dddddd", "#434343"), progress_color=("#6472CD"))
+    nameOn = ctk.CTkSwitch(about, text="Show Name", command=toggleName, variable=nameOn, onvalue="true", offvalue="false", button_color=("#eeeeee", "#323232"), button_hover_color=("#dddddd", "#434343"), progress_color=("#6472CD"))
+    htmlscaletext = ctk.CTkLabel(about, text="Assignment Viewer Text Scale", fg_color="transparent")
+    htmlScaleslider = ctk.CTkSlider(about, from_=1, to=2, number_of_steps=10, command=adjustScale, button_color=("#eeeeee", "#323232"), button_hover_color=("#dddddd", "#434343"), progress_color=("#6472CD"),)
+    with open("config.yaml", "r") as conf:
+        s2config = yaml.safe_load(conf)
+        htmlScaleslider.set(s2config["htmlScale"])
+    conf.close()
+    aboutLogo = ctk.CTkLabel(about, image = aLg, text="", fg_color=("transparent"))    
+    aboutBox = ctk.CTkLabel(about, image = aBox, text="", fg_color=("transparent"))
+    aboutText = ctk.CTkLabel(about, text="Satchel:Two", fg_color=("transparent"))
+    aboutVersion = ctk.CTkLabel(about, text = "Version 1.1a - Backpack", fg_color=("transparent"))
+    aboutUs = ctk.CTkLabel(about, text = "Made in the UK by ProjectSCR", fg_color=("transparent"))
+    if sys.platform == "win32" or sys.platform == "linux":
+        aboutSettingsTitle = ctk.CTkLabel(about, text = "Settings", fg_color=("transparent"), font=robototitle)
+    else:
+        aboutSettingsTitle = ctk.CTkLabel(about, text = "Settings", fg_color=("transparent"), font=sfprotitle)
+    aboutSettingsText = ctk.CTkLabel(about, text = "These options require a restart of Satchel:Two", fg_color=("transparent"))
+    aboutLogo.place(x = 480, y = 120, anchor = CENTER)
     aboutLogo.lift()
-    aboutUs.place(x = 160, y = 120, anchor = CENTER)
-    aboutText.place(x = 160, y = 140, anchor = CENTER)
-    aboutVersion.place(x = 160, y = 160, anchor = CENTER)
+    aboutUs.place(x = 480, y = 180, anchor = CENTER)
+    aboutText.place(x = 480, y = 200, anchor = CENTER)
+    aboutVersion.place(x = 480, y = 220, anchor = CENTER)
+    aboutBox.place(x = 480, y = 170, anchor = CENTER)
+    photoOn.place(x = 100, y = 80, anchor = CENTER)
+    nameOn.place(x = 81, y = 105, anchor = CENTER)
+    htmlScaleslider.place(x = 121, y = 170, anchor = CENTER)
+    htmlscaletext.place(x = 110, y = 140, anchor = CENTER)
+    aboutSettingsText.place(x = 150, y = 300, anchor = CENTER)
+    aboutSettingsTitle.place(x = 75, y = 20, anchor = CENTER)
+    aboutBox.lower()
     aboutText.lift()
     aboutUs.lift()
 
@@ -208,32 +295,29 @@ def login(startup):
     summarypos = 0
     root.update()
     global apitoken    
-    # Checking for a stored api url in the key.txt 
+    # Checking for a stored api url in the YAML config
     # It isn't encrypted because it doesn't store any credentials plus it's not shared online
     # which may seem controversial but it expires after a month and requires this program to really
     # do anything with it. ¯\_(ツ)_/¯
-    if os.path.isfile("key.txt") == True and startup == True:
-        with open("key.txt", "r", encoding="utf-8") as file:
-            apitoken = file.read()
-            file.close()
-    elif os.path.isfile("key.txt") == True and startup != True:
+    with open("config.yaml", "r") as conf:
+            s2config = yaml.safe_load(conf)
+            
+    if startup == True and s2config["key"] != None:
+        apitoken = s2config["key"]
+    elif startup != True:
         loginprompt = ctk.CTkInputDialog(title = "Satchel:Two Login", text = "Welcome back! Please enter your Print Homework URL to log in.", fg_color=("#ffffff", "#232323"), button_fg_color = "#6D78CF", button_hover_color = "#4D589C")
         apitoken = loginprompt.get_input()
-        with open("key.txt", "w+", encoding="utf-8") as file:
-            file.write(apitoken)
-            file.close()
     else:
         loginprompt = ctk.CTkInputDialog(title = "Satchel:Two Login", text = "Welcome back! Please enter your Print Homework URL to log in.", fg_color=("#ffffff", "#232323"), button_fg_color = "#6D78CF", button_hover_color = "#4D589C")
         apitoken = loginprompt.get_input()
-        with open("key.txt", "w+", encoding="utf-8") as file:
-            file.write(apitoken)
-            file.close()
+    
     global printhwurl
     global studenttoken
+    conf.close()
     
     #  Checking if the apitoken is nothing because the user does not understand the concept of "pasting".
 
-    if apitoken == None:
+    if apitoken == None or apitoken == "":
         loginprompt.destroy()
         apitoken = ""
         buttonassignments.configure(state = "disabled")
@@ -243,16 +327,6 @@ def login(startup):
         # Issue #10 patched by changing method.
         printhwurl = apitoken
         auth = str((apitoken.split("smhw_token=", 1)[1]))
-        #if "homeworks" in apitoken:
-        #    auth = apitoken[65:289]
-        #elif "flexible_tasks" in apitoken:
-        #    auth = apitoken[70:294]
-        #elif "classworks" in apitoken:
-        #    auth = apitoken[66:290]
-        #else:
-        #    apitoken = ""
-        #    buttonassignments.configure(state = "disabled")
-        #    throwError("badApi")
         dec = str(base64.b64decode(auth))
         #Handling expired tokens
         expdate = re.search(r'(?<=expiry_date=)(.*?)(?=T)', dec)
@@ -313,21 +387,30 @@ def login(startup):
                 forename = userinfo[0]
                 surname = userinfo[1]
                 avatar = userinfo[2]
-                fullname = (forename, surname)
+                fullname = (forename + " " + surname)
+
+                with open("config.yaml", "r") as conf:
+                    s2config = yaml.safe_load(conf)
+                with open("config.yaml", "w") as conf:
+                    s2config["key"] = str(printhwurl)
+                    yaml.safe_dump(s2config, conf)
+                
 
                 # Reporting back to the debug log and updating UI for user
 
                 print("Welcome back,", forename, surname, "!")
-                #print(auth)
                 urllib.request.urlretrieve(avatar, dldir + "avatar.jpeg")
                 avtr = ctk.CTkImage(Image.open(str(dldir + "avatar.jpeg")), size=(96,136))
                 name = ctk.CTkLabel(root, text = fullname, text_color=("#232323", "#ffffff"), corner_radius=6, width = 140, height = 45, wraplength = 120, bg_color = ("#6472CD", "#384079"), fg_color=("#ffffff", "#232323"))
                 avatarframe = ctk.CTkFrame(root, border_color = "#ffffff", border_width = 2, corner_radius=6, width = 100, height = 140, bg_color="#5D67B4")
                 avatarpic = ctk.CTkLabel(avatarframe, image = avtr, text="")
-                avatarframe.place(x = 80, y = 360, anchor=CENTER)
-                avatarpic.place(x = 50, y = 70, anchor=CENTER)
-                name.place(x = 80, y = 460, anchor=CENTER)
+                if s2config["photoEnabled"] == True:
+                    avatarframe.place(x = 80, y = 360, anchor=CENTER)
+                    avatarpic.place(x = 50, y = 70, anchor=CENTER)
+                if s2config["nameEnabled"] == True:
+                    name.place(x = 80, y = 460, anchor=CENTER)
                 name.lift()
+                conf.close()
                 root.update()
     
     
@@ -336,14 +419,13 @@ def login(startup):
 def assignments():
     # Getting the UI ready
     root.update()
+    buttonassignments.configure(state = "disabled")
+    buttonabout.configure(state = "disabled")
+    greeting.destroy()
     htmlviewer.load_url("about:blank")
-    progressbar = ctk.CTkProgressBar(root, orientation="horizontal", border_color = "#000000", progress_color = "#6D78CF", mode = "indeterminate")
     pleasewait = ctk.CTkLabel(root, text = "Please wait... Downloading assignments...", text_color = ("#232323", "#ffffff"), bg_color=("#ffffff", "#232323"))
-    progressbar.place(x = 480, y = 340, anchor = CENTER)
-    progressbar.lift(aboveThis = None)
     pleasewait.place(x = 480, y = 300, anchor = CENTER)
     pleasewait.place(aboveThis = None)
-    progressbar.start()
     root.update()
 
     # Setting up proper authentication for Requests
@@ -393,10 +475,10 @@ def assignments():
     hwt = fetchlib.fetchhw()
     homeworktemp = hwt.apifetch(apiurl=calendarurl)
 
-    # Setting encoding because Windows hates me
+    # Setting encoding because Windows hates me still
 
     if sys.platform == "win32":
-        df = pd.read_csv(calendarlocation, encoding="cp1252", usecols=["UID", "Homework Title", "URL"])
+        df = pd.read_csv(calendarlocation, encoding="utf-8", usecols=["UID", "Homework Title", "URL"])
     else:
         df = pd.read_csv(calendarlocation, usecols=["UID", "Homework Title", "URL"])
     uid_list = df["UID"].tolist()
@@ -414,7 +496,7 @@ def assignments():
 
     for item in todelete:
         if item.endswith(".html"):
-            if item.startswith("blank") == False:
+            if item.startswith("S") == False: # Specifically here for future plans for self created assignments
                 os.remove(os.path.join(dldir, item))
 
     count = 0
@@ -437,7 +519,6 @@ def assignments():
                 assignment = hw.getHomework(uid_current, printhwurl, dldir, False)
             downloads.append(uid_current + ".html")
             count = count + 1
-            root.update()
         print("Todos fetched successfully!")
         global ok
         ok = True
@@ -447,8 +528,6 @@ def assignments():
             throwError("badGateway")
             summarylist = []
             ok = False
-            progressbar.stop()
-            progressbar.destroy()
             pleasewait.destroy()
         if e.code == 404:
             pass
@@ -456,15 +535,11 @@ def assignments():
             throwError("network")
             summarylist = []
             ok = False
-            progressbar.stop()
-            progressbar.destroy()
             pleasewait.destroy()
-    except ("ConnectionAbortedError", "ConnectionError", "ConnectionRefusedError", "ConnectionResetError"):
+    except ("ConnectionAbortedError", "ConnectionError", "ConnectionRefusedError", "ConnectionResetError", "BadGateway"):
         throwError("network") # Treat any other errors as network errors which are most likely.
         summarylist = []
         ok = False
-        progressbar.stop()
-        progressbar.destroy()
         pleasewait.destroy()
 
     # Create a list of all of the HTML's in the downloads directory
@@ -476,8 +551,6 @@ def assignments():
             htmllist.append(item)
 
     # Stop the UI after updating
-    progressbar.stop()
-    progressbar.destroy()
     pleasewait.destroy()
     root.update()
     assignmentslist = ctk.CTkOptionMenu(root, values = summarylist, command=assignments_callback, width = 140, height = 20, fg_color = ("#FFFFFF", "#232323"), button_color = "#6472CD", button_hover_color = "#4D589C", bg_color = ("#6472CD", "#444D8B"), dropdown_fg_color = ("#FFFFFF", "#232323"), dropdown_hover_color = "#ADADAD", text_color = ("#000000", "#FFFFFF" ), dynamic_resizing=False, hover = False)
@@ -485,15 +558,18 @@ def assignments():
     if ok == True:
         throwError("hwFetched") # Uses the throwError as a leftover function but less complicated
         htmlviewer.load_file(dldir + (downloads[0]))
-        buttonsatchelone.configure(state = "enabled")
+        buttonsatchelone.configure(state = "disabled")
         buttonhandin.configure(state = "disabled")
         imagetoolbar.lift()
         buttonsatchelone.lift()
         buttonhandin.lift()
+        buttoncreatehw.lift()
         global summarypos
         summarypos = 0
         htmlviewer.load_url("about:blank")
         root.update()
+    buttonassignments.configure(state = "enabled")
+    buttonabout.configure(state = "enabled")
     root.update()
    
 # Creating a callback for the assignments list
@@ -514,6 +590,8 @@ def assignments_callback(choice):
     imagetoolbar.lift()
     buttonsatchelone.lift()
     buttonhandin.lift()
+    whydoesntthisworknormally()
+    buttoncreatehw.lift()
     root.update()
 
 #Callback for handing in and withdrawing assignments
@@ -533,34 +611,43 @@ def hand_in():
 # Themeing options
 
 def themecallback():
-    appearance = ctk.get_appearance_mode()
-    if appearance == "Light":
+    with open("config.yaml", "r") as conf:
+        s2config = yaml.safe_load(conf)
+
+    if s2config["currentTheme"] == "Light":
         ctk.set_appearance_mode("Dark")
-        htmlviewer.configure(dark_theme_enabled = True)
-        #tkinterweb.utilities.DARK_STYLE.replace("#0d0b1a", "#232323")
-        htmlviewer.reload()
+
         icon = PhotoImage(file = dir + "/Assets/Dark.png")
         root.iconphoto(True, icon)
+        with open("config.yaml", "w") as conf:
+            s2config["currentTheme"] = "Dark"
+            yaml.safe_dump(s2config, conf)        
+        htmlviewer.configure(dark_theme_enabled = True)
+        htmlviewer.reload()
         root.update()
     else:
         ctk.set_appearance_mode("Light")
-        htmlviewer.configure(dark_theme_enabled = False)
-        htmlviewer.reload()
+        
         icon = PhotoImage(file = dir + "/Assets/Light.png")
         root.iconphoto(True, icon)
+        with open("config.yaml", "w") as conf:
+            s2config["currentTheme"] = "Light"
+            yaml.safe_dump(s2config, conf)
+        htmlviewer.configure(dark_theme_enabled = False)
+        htmlviewer.reload()
         root.update()
 
 # Callback to open the assignment on Satchel:One
 
 def onecallback():
-    if sys.platform == "win32":
-        df = pd.read_csv(calendarlocation, encoding="cp1252", usecols=["URL"])
-    else:
-        df = pd.read_csv(calendarlocation, usecols=["URL"])
+    df = pd.read_csv(calendarlocation, encoding="utf-8", usecols=["URL"])
     URLList = df["URL"].tolist()
     satchelpage = URLList[summarypos]
-    print("Redirecting to assignment: " + satchelpage)
     webbrowser.open(str(satchelpage), new = 0, autoraise = True)
+
+def createcallback():
+    print("How did you press this? This isn't even finished yet!")
+    buttoncreatehw.lift()
 
 # Main GUI initialisation
 
@@ -571,10 +658,9 @@ root.title("Satchel:Two")
 root.config(bg="#ffffff")
 root.configure(fg_color=("#ffffff", "#232323"))
 root.resizable(False, False)
-icon = PhotoImage(file = dir + "/Assets/Light.png")
-root.iconphoto(True, icon)
 if sys.platform == "win32":
     root.after(201, lambda :root.iconbitmap(dir + "/Assets/newlogowin32ico.ico"))
+
 
 # Telling CTK where the assets are
 
@@ -590,15 +676,18 @@ buttonexit = ctk.CTkButton(root, text = "Exit", command = root.destroy , fg_colo
 # Assignments Button
 buttonassignments = ctk.CTkButton(root, text = "Fetch Assignments", command = assignments, fg_color=("#ffffff", "#232323"), bg_color = ("#8A92E9", "#31386A"), hover_color = ("#F0EEE5", "#232323"), text_color = ("#232323", "#ffffff"))
 # Accounts Button
-buttonaccount = ctk.CTkButton(root, text = "Log Out", command = lambda: login(startup=False), fg_color=("#ffffff", "#232323"), bg_color = ("#8A92E9", "#31386A"), hover_color = ("#F0EEE5", "#232323"), text_color = ("#232323", "#ffffff"))
+buttonaccount = ctk.CTkButton(root, text = "Log Out", command = lambda: login(startup=False), fg_color=("#ffffff", "#232323"), bg_color = ("#8A92E9", "#444D8B"), hover_color = ("#F0EEE5", "#232323"), text_color = ("#232323", "#ffffff"))
 # About Button
-buttonabout = ctk.CTkButton(root, text = "About", command = openAbout, fg_color=("#ffffff", "#232323"), bg_color = ("#8A92E9", "#31386A"), hover_color = ("#F0EEE5", "#232323"), text_color = ("#232323", "#ffffff"))
+buttonabout = ctk.CTkButton(root, text = "Settings", command = openSettings, fg_color=("#ffffff", "#232323"), bg_color = ("#8A92E9", "#31386A"), hover_color = ("#F0EEE5", "#232323"), text_color = ("#232323", "#ffffff"))
 # Theme Toggle button
-buttonthemetoggle = ctk.CTkButton(root, text = "Change Theme", command = themecallback, fg_color=("#ffffff", "#232323"), bg_color = ("#6472CD", "#444D8B"), hover_color = ("#F0EEE5", "#232323"), text_color = ("#232323", "#ffffff"))
+buttonthemetoggle = ctk.CTkButton(root, text = "Change Theme", command = themecallback, fg_color=("#ffffff", "#232323"), bg_color = ("#6472CD", "#31386A"), hover_color = ("#F0EEE5", "#232323"), text_color = ("#232323", "#ffffff"))
 # Hand in button
 buttonhandin = ctk.CTkButton(root, text = "Hand In", command = hand_in, fg_color=("#ffffff", "#232323"), bg_color = ("#6472CD", "#444D8B"), hover_color = ("#F0EEE5", "#232323"), text_color = ("#232323", "#ffffff"))
 # Go to Satchel:One button
 buttonsatchelone = ctk.CTkButton(root, text = "View on Satchel:One", command = onecallback, fg_color=("#ffffff", "#232323"), bg_color = ("#6472CD", "#444D8B"), hover_color = ("#F0EEE5", "#232323"), text_color = ("#232323", "#ffffff"))
+# Homework Creation button
+buttoncreatehw = ctk.CTkButton(root, text = "Create Assignment", command = createcallback, fg_color=("#ffffff", "#232323"), bg_color = ("#6472CD", "#444D8B"), hover_color = ("#F0EEE5", "#232323"), text_color = ("#232323", "#ffffff"))
+buttoncreatehw.configure(state = "disabled")
 
 # Placing defined widgets
 
@@ -607,49 +696,98 @@ imagelogo.place(x = 80, y = 60, anchor = CENTER)
 imagelogo.lift() # Simply here so the logo displays over the sidebar
 imagetoolbar.place(x = 475, y = 616, anchor = CENTER)
 buttonassignments.place(x = 80, y = 140, anchor = CENTER)
-buttonaccount.place(x = 80, y = 180, anchor = CENTER)
-buttonabout.place(x = 80, y = 220, anchor = CENTER)
-buttonsatchelone.place(x = 340, y = 616, anchor = CENTER)
-buttonhandin.place(x = 580, y = 616, anchor = CENTER)
-buttonthemetoggle.place(x = 80, y = 575, anchor = CENTER)
+buttonaccount.place(x = 80, y = 575, anchor = CENTER)
+buttonabout.place(x = 80, y = 180, anchor = CENTER)
+buttonsatchelone.place(x = 450, y = 616, anchor = CENTER)
+buttonhandin.place(x = 600, y = 616, anchor = CENTER)
+buttoncreatehw.place(x = 300, y = 616, anchor = CENTER)
+buttonthemetoggle.place(x = 80, y = 220, anchor = CENTER)
 buttonexit.place(x = 80, y = 615, anchor = CENTER)
 
 # Other stuff that needs configuring
 
 sfpro = ctk.CTkFont(family="SF Pro Rounded Regular", size=19)
+sfprotitle = ctk.CTkFont(family="SF Pro Rounded Regular", size=28)
+robototitle = ctk.CTkFont(family="Roboto", size=28)
 
 # Disabling while on landing page
 buttonsatchelone.configure(state = "disabled")
 buttonhandin.configure(state = "disabled")
+# For some reason, customtkinter refuses to raise this button under any circumstances
+# Unless it's in a function. I have no clue why.
+def whydoesntthisworknormally():
+    buttoncreatehw.lift()
+buttoncreatehw.lift()
 
 # Calling the login prompt from startup
 
 login(startup=True)
 
+# Clock and greeting string
+
+hour = int(time.strftime("%H"))
+minute = int(time.strftime("%M"))
+time = (str(hour), ":", str(minute))
+if hour < 12:
+    greet = "Good Morning"
+elif hour >= 12 and not hour > 17:
+    greet = "Good Afternoon"
+else:
+    greet = "Good Evening"
+
+if sys.platform == "win32" or sys.platform == "linux":
+    greeting = ctk.CTkLabel(root, text = greet + ", " + str(forename), font = robototitle)
+else:
+    greeting = ctk.CTkLabel(root, text = greet + ", " + str(forename), font = sfprotitle)
+greeting.place(x = 165, y = 40)
+
 # Initialising theme and HTML viewer
 
+with open("config.yaml", "r") as conf:
+    s2config = yaml.safe_load(conf)
+    htmlscale = s2config["htmlScale"]
+    conf.close()
+
+# Handling opening hyperlinks in the default web browser instead of TkinterWeb
+
+def open_link_external(hyperlink):
+    webbrowser.open(hyperlink)
+    return "break"
+
 global htmlviewer
-htmlviewer = HtmlFrame(root, messages_enabled=False, javascript_enabled=True, images_enabled=True)
+htmlviewer = HtmlFrame(root, messages_enabled=False, javascript_enabled=True, images_enabled=True, zoom=htmlscale, on_link_click=open_link_external)
 htmlviewer.place(x = 475, y = 300, height= 580, width = 630, anchor=CENTER)
+htmlviewer.load_url("about:blank")
+htmlviewer.lower()
 
-appearance = ctk.get_appearance_mode()
-if appearance == "Dark":
-    ctk.set_appearance_mode("Dark")
-    htmlviewer.configure(dark_theme_enabled = True)
-    htmlviewer.load_url("about:blank")
-    htmlviewer.reload()
-    icon = PhotoImage(file = dir + "/Assets/Dark.png")
-    root.iconphoto(True, icon)
-    root.update()
-else:
-    ctk.set_appearance_mode("Light")
-    htmlviewer.configure(dark_theme_enabled = False)
-    htmlviewer.load_url("about:blank")
-    htmlviewer.reload()
-    icon = PhotoImage(file = dir + "/Assets/Light.png")
-    root.iconphoto(True, icon)
-    root.update()
 
-htmlviewer.reload()
+with open("config.yaml", "r") as conf:
+    s2config = yaml.safe_load(conf)
+
+    if s2config["currentTheme"] == "Dark":
+        ctk.set_appearance_mode("Dark")
+        htmlviewer.configure(dark_theme_enabled = True)
+        htmlviewer.reload()
+        icon = PhotoImage(file = dir + "/Assets/Dark.png")
+        root.iconphoto(True, icon)
+        with open("config.yaml", "w") as conf:
+            s2config["currentTheme"] = "Dark"
+            yaml.safe_dump(s2config, conf)
+        root.update()
+        htmlviewer.reload()
+    else:
+        ctk.set_appearance_mode("Light")
+        htmlviewer.configure(dark_theme_enabled = False)
+        htmlviewer.reload()
+        icon = PhotoImage(file = dir + "/Assets/Light.png")
+        root.iconphoto(True, icon)
+        with open("config.yaml", "w") as conf:
+            s2config["currentTheme"] = "Light"
+            yaml.safe_dump(s2config, conf)
+        root.update()
+        htmlviewer.reload()
+    conf.close()
+
+whydoesntthisworknormally()
 
 root.mainloop()

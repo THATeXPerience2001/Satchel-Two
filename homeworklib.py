@@ -159,12 +159,12 @@ class homework:
         todoraw = jsontodo.get("todos", [{}])
 
         for x in todoraw:
-            if str(x.get("class_task_id")) == str(taskid):
-                idoftask = x.get("id")
-                statusoftask = x.get("completed")
-                status = [idoftask, statusoftask]
+            if str(x.get("class_task_id")) == str(taskid): # If the task ID is the same as the one in the todos,
+                idoftask = x.get("id") # Get the ID of that
+                statusoftask = x.get("completed") # Get the status of the assignment
+                status = [idoftask, statusoftask] # Combine them into a list
                 return status
-        return None
+        return None 
 
     def handin(self, classtaskid, myprinthwurl, status):
         # This is how we hand in assignments
