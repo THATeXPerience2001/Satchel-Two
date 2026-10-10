@@ -1,5 +1,5 @@
 # Satchel:Two Compatibility Installer script
-# Ah yes let me just check my homework on WINDOWS VISTA
+# Ah yes let me just check my homework on WINDOWS XP
 
 # Libraries, you know the drill..
 
@@ -20,9 +20,9 @@ dir = str(dir)
 print()
 print("Welcome to the Satchel:Two Compatibility Pre-Installer!")
 print()
-print("Please follow the guide at https://github.com/THATeXPerience2001/Satchel-Two/wiki/SatchelTwo-CLI#installing-the-cli")
+print("Please follow the guide at https://github.com/THATeXPerience2001/Satchel-Two/wiki/Installing-Satchel:Two")
 print()
-print("Please note this installer is intended ONLY for LEGACY WINDOWS SYSTEMS (AKA Older than 7)")
+print("Please note this installer is intended ONLY for LEGACY WINDOWS SYSTEMS (AKA Windows 7 or older)")
 print()
 time.sleep(1)
 print("STAGE 1: Running platform checks...")
@@ -149,6 +149,7 @@ try:
     os.system("pip install --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host files.pythonhosted.org pandas==2.0.3") # Python 3.8+
     os.system("pip install --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host files.pythonhosted.org requests==2.32.4") # Python 3.10
     os.system("pip install --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host files.pythonhosted.org tkinterweb[recommended]") # Python 3.2
+    os.system("pip install --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host files.pythonhosted.org PyYAML") # Python 3.8
 
 except Exception as e:
     print("This error occured while installing libraries:", e)

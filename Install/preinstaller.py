@@ -20,7 +20,7 @@ dir = str(dir)
 print()
 print("Welcome to the Satchel:Two Pre-Installer!")
 print()
-print("Please follow the guide at https://github.com/THATeXPerience2001/Satchel-Two/wiki/SatchelTwo-CLI#installing-the-cli")
+print("Please follow the guide at https://github.com/THATeXPerience2001/Satchel-Two/wiki/Installing-Satchel:Two")
 print()
 time.sleep(1)
 print("STAGE 1: Running platform checks...")
@@ -161,6 +161,7 @@ try:
         os.system("pip install --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host files.pythonhosted.org pandas") # Python 3.11
         os.system("pip install --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host files.pythonhosted.org requests") # Python 3.10
         os.system("pip install --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host files.pythonhosted.org tkinterweb[recommended]") # Python 3.2
+        os.system("pip install --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host files.pythonhosted.org PyYAML") # Python 3.8
     else:
         os.system("pip3 install --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host files.pythonhosted.org customtkinter --break-system-packages")
         os.system("pip3 install --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host files.pythonhosted.org icalendar --break-system-packages")
@@ -168,6 +169,7 @@ try:
         os.system("pip3 install --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host files.pythonhosted.org pandas --break-system-packages")
         os.system("pip3 install --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host files.pythonhosted.org requests --break-system-packages")
         os.system("pip3 install --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host files.pythonhosted.org tkinterweb[recommended] --break-system-packages")
+        os.system("pip3 install --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host files.pythonhosted.org PyYAML --break-system-packages")
 
 
 except Exception as e:
