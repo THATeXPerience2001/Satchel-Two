@@ -581,6 +581,7 @@ def assignments_callback(choice):
     summarypos = summarylist.index(choice)
     selection = downloads[summarypos]
     currentid = selection[:-5]
+    buttonsatchelone.configure(state = "enabled") # Patched Issue 7
     currentstatus = hw.getTodos(myprinthwurl=printhwurl, taskid=currentid)
     if currentstatus[1] == True:
         buttonhandin.configure(state = "enabled", text = "Withdraw Assignment") #If the assignment is handed in, withdraw it.
