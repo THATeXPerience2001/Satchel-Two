@@ -1,7 +1,11 @@
 # The Satchel:Two Project
 ## Making homework... Slightly less infuriating!
 
-<img width="503" height="434" alt="backpack" src="https://github.com/user-attachments/assets/994c0b76-211e-4d19-b9ae-cc40930b804d" />
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://github.com/user-attachments/assets/e575b63d-71b6-4853-8187-84cabb63a74e">
+  <source media="(prefers-color-scheme: light)" srcset="https://github.com/user-attachments/assets/8b6f41d6-483b-4ce7-b5d5-040cd317e9e0">
+  <img alt="Fallback image description" src="default-image.png">
+</picture>
 
 ## What is Satchel:Two?
 
