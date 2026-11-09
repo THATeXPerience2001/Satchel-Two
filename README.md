@@ -42,7 +42,8 @@ This project is **100% hand coded** without any use of AI in the code whatsoever
 - Roshan Paswan for tkPDFViewer 1
 - Jeremy Jacobson for tkPDFViewer 2
 - Andrew Clarke for TkinterWeb
-- Tom Schimansky for the far-superior Custom TKinter!
+- Tom Schimansky for CustomTKinter!
+- Federico Spada for the continued Custom2Kinter!
 - Apple for their SF Pro fonts!
 - WhiteBox for their Packages app for Mac!
 - NullSoft for their amazing installer!
