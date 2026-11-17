@@ -28,6 +28,13 @@ For Windows users, you can watch the video linked here ->
 
 If you want a written guide: [https://github.com/THATeXPerience2001/Satchel-Two/wiki]
 
+## Some quick stats
+
+- Uses under 200 Megabytes of RAM on average, for a comparison; Supermium 144.0 with uBlock Origin Lite and just Satchel:One open uses about 320 Megabytes
+- Fetches 30 assignments with 10Mbps Wi-Fi in under 6 seconds
+- Works on Windows 7 - 11, MacOS 10.13 - 27 (ARM and X86_64) and basically any Linux distro that runs Python 3.15 or newer
+- Has ZERO private telemetry data WHATSOEVER, this program tracks nothing!
+
 ## I want a deeper explanation.
 This is my own reimplementation of Satchel:One (Formerly ShowMyHomework) that should actually function using the immense power of API TOKENS and iCalendars. This is designed to completely overhaul the borderline useless UI of Satchel:One that is so outdated that it can still function on Windows 2000. Not to mention the fact that in it's current state, it is utterly broken with random HTML formatting errors, ridiculously out of range date and times and a whole bunch of silly stuff that makes it infuriating and funny at the same time. 
 
